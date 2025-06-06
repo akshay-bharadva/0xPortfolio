@@ -21,7 +21,12 @@ const buttonActionSmallClass = (
 ) =>
   `text-xs ${actionColor} hover:${hoverActionColor} ${textColor} px-2 py-1 rounded-none font-semibold border border-black shadow-[1px_1px_0px_#000] active:translate-x-[0.5px] active:translate-y-[0.5px] active:shadow-none transition-all font-space`;
 
-export default function ContentManager() {
+interface ContentManagerProps {
+  startInCreateMode?: boolean; // For creating a new section
+  onActionHandled?: () => void;
+}
+
+export default function ContentManager({ startInCreateMode, onActionHandled }: ContentManagerProps) {
   const [sections, setSections] = useState<PortfolioSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +70,20 @@ export default function ContentManager() {
 
   useEffect(() => {
     fetchPortfolioContent();
+  }, []);
+
+  const handleCreateNewSection = () => {
+    setIsCreatingSection(true);
+    setEditingSection(null);
+    setEditingItem(null);
+    setIsCreatingItemInSection(null);
+  };
+
+  useEffect(() => {
+    if (startInCreateMode) { // Assuming 'startInCreateMode' means create a new section
+      handleCreateNewSection();
+      onActionHandled?.();
+    }
   }, []);
 
   const handleSaveSection = async (sectionData: Partial<PortfolioSection>) => {
@@ -183,12 +202,7 @@ export default function ContentManager() {
         <div className="flex items-center justify-between border-b-2 border-black bg-gray-100 px-6 py-4">
           <h2 className="text-xl font-bold text-black">Portfolio Content</h2>
           <button
-            onClick={() => {
-              setIsCreatingSection(true);
-              setEditingSection(null);
-              setEditingItem(null);
-              setIsCreatingItemInSection(null);
-            }}
+            onClick={handleCreateNewSection}
             className={buttonPrimaryClass}
           >
             + Add Section
@@ -328,7 +342,7 @@ export default function ContentManager() {
                 <div className="mt-4 space-y-3">
                   <h4 className="font-bold text-black">Items:</h4>
                   {section.portfolio_items &&
-                  section.portfolio_items.length > 0 ? (
+                    section.portfolio_items.length > 0 ? (
                     section.portfolio_items.map((item) => (
                       <div
                         key={item.id}
@@ -396,108 +410,117 @@ export default function ContentManager() {
               )}
               {((isCreatingItemInSection === section.id && !editingItem) ||
                 (editingItem && editingItem.section_id === section.id)) && (
-                <div className="mt-4 border-t-2 border-black bg-yellow-50 p-4">
-                  <h4 className="text-md mb-2 font-bold text-black">
-                    {editingItem
-                      ? `Edit Item: ${editingItem.title}`
-                      : `Create New Item in "${sections.find((s) => s.id === section.id)?.title || ""}"`}
-                  </h4>
-                  <form
-                    onSubmit={(e: FormEvent<HTMLFormElement>) => {
-                      e.preventDefault();
-                      const formData = new FormData(e.currentTarget);
-                      const data: Partial<PortfolioItem> = {
-                        title: formData.get("item_title") as string,
-                        subtitle:
-                          (formData.get("item_subtitle") as string) || null,
-                        description:
-                          (formData.get("item_description") as string) || null,
-                        link_url: (formData.get("item_link") as string) || null,
-                        image_url:
-                          (formData.get("item_image_url") as string) || null,
-                        tags:
-                          (formData.get("item_tags") as string)
-                            ?.split(",")
-                            .map((t) => t.trim())
-                            .filter((t) => t) || null,
-                        display_order:
-                          parseInt(
-                            formData.get("item_display_order") as string,
-                          ) || 0,
-                      };
-                      handleSaveItem(data, section.id);
-                    }}
-                  >
-                    <input
-                      name="item_title"
-                      placeholder="Item Title"
-                      defaultValue={editingItem?.title || ""}
-                      required
-                      className={inputClass}
-                    />
-                    <input
-                      name="item_subtitle"
-                      placeholder="Item Subtitle (optional)"
-                      defaultValue={editingItem?.subtitle || ""}
-                      className={inputClass}
-                    />
-                    <textarea
-                      name="item_description"
-                      placeholder="Item Description (Markdown supported, optional)"
-                      defaultValue={editingItem?.description || ""}
-                      className={textareaClass}
-                      rows={3}
-                    />
-                    <input
-                      name="item_link"
-                      placeholder="Item Link URL (e.g. https://example.com)"
-                      defaultValue={editingItem?.link_url || ""}
-                      className={inputClass}
-                    />
-                    <input
-                      name="item_image_url"
-                      placeholder="Item Image URL (e.g. https://.../image.png)"
-                      defaultValue={editingItem?.image_url || ""}
-                      className={inputClass}
-                    />
-                    <input
-                      name="item_tags"
-                      placeholder="Tags (comma-separated, optional)"
-                      defaultValue={editingItem?.tags?.join(", ") || ""}
-                      className={inputClass}
-                    />
-                    <input
-                      type="number"
-                      name="item_display_order"
-                      placeholder="Order"
-                      defaultValue={
-                        editingItem?.display_order?.toString() || "0"
-                      }
-                      className={inputClass}
-                    />
+                  <div className="mt-4 border-t-2 border-black bg-yellow-50 p-4">
+                    <h4 className="text-md mb-2 font-bold text-black">
+                      {editingItem
+                        ? `Edit Item: ${editingItem.title}`
+                        : `Create New Item in "${sections.find((s) => s.id === section.id)?.title || ""}"`}
+                    </h4>
+                    <form
+                      onSubmit={(e: FormEvent<HTMLFormElement>) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.currentTarget);
+                        const data: Partial<PortfolioItem> = {
+                          title: formData.get("item_title") as string,
+                          subtitle:
+                            (formData.get("item_subtitle") as string) || null,
+                          description:
+                            (formData.get("item_description") as string) || null,
+                          link_url: (formData.get("item_link") as string) || null,
+                          image_url:
+                            (formData.get("item_image_url") as string) || null,
+                          tags:
+                            (formData.get("item_tags") as string)
+                              ?.split(",")
+                              .map((t) => t.trim())
+                              .filter((t) => t) || null,
+                          display_order:
+                            parseInt(
+                              formData.get("item_display_order") as string,
+                            ) || 0,
+                          internal_notes:
+                            (formData.get("item_internal_notes") as string) || null,
+                        };
+                        handleSaveItem(data, section.id);
+                      }}
+                    >
+                      <input
+                        name="item_title"
+                        placeholder="Item Title"
+                        defaultValue={editingItem?.title || ""}
+                        required
+                        className={inputClass}
+                      />
+                      <input
+                        name="item_subtitle"
+                        placeholder="Item Subtitle (optional)"
+                        defaultValue={editingItem?.subtitle || ""}
+                        className={inputClass}
+                      />
+                      <textarea
+                        name="item_description"
+                        placeholder="Item Description (Markdown supported, optional)"
+                        defaultValue={editingItem?.description || ""}
+                        className={textareaClass}
+                        rows={3}
+                      />
+                      <input
+                        name="item_link"
+                        placeholder="Item Link URL (e.g. https://example.com)"
+                        defaultValue={editingItem?.link_url || ""}
+                        className={inputClass}
+                      />
+                      <input
+                        name="item_image_url"
+                        placeholder="Item Image URL (e.g. https://.../image.png)"
+                        defaultValue={editingItem?.image_url || ""}
+                        className={inputClass}
+                      />
+                      <input
+                        name="item_tags"
+                        placeholder="Tags (comma-separated, optional)"
+                        defaultValue={editingItem?.tags?.join(", ") || ""}
+                        className={inputClass}
+                      />
+                      <input
+                        type="number"
+                        name="item_display_order"
+                        placeholder="Order"
+                        defaultValue={
+                          editingItem?.display_order?.toString() || "0"
+                        }
+                        className={inputClass}
+                      />
+                      <textarea
+                        name="item_internal_notes"
+                        placeholder="Internal Notes (Admin only, optional)"
+                        defaultValue={editingItem?.internal_notes || ""}
+                        className={textareaClass}
+                        rows={2}
+                      />
 
-                    <div className="mt-2 flex gap-2">
-                      <button
-                        type="submit"
-                        className={buttonPrimaryClass}
-                        disabled={isLoading}
-                      >
-                        Save Item
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsCreatingItemInSection(null);
-                          setEditingItem(null);
-                        }}
-                        className={buttonSecondaryClass}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
+                      <div className="mt-2 flex gap-2">
+                        <button
+                          type="submit"
+                          className={buttonPrimaryClass}
+                          disabled={isLoading}
+                        >
+                          Save Item
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsCreatingItemInSection(null);
+                            setEditingItem(null);
+                          }}
+                          className={buttonSecondaryClass}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
             </div>
           ))}
         </div>

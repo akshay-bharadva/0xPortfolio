@@ -18,7 +18,12 @@ const buttonActionClass = (
 ) =>
   `px-3 py-1 rounded-none text-sm font-semibold border-2 border-black shadow-[2px_2px_0px_#000] hover:translate-x-[0.5px] hover:translate-y-[0.5px] hover:shadow-[1px_1px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50 transition-all duration-100 font-space ${color} hover:${bgColorHover} ${textColor}`;
 
-export default function BlogManager() {
+interface BlogManagerProps {
+  startInCreateMode?: boolean;
+  onActionHandled?: () => void; // Callback to parent
+}
+
+export default function BlogManager({ startInCreateMode, onActionHandled }: BlogManagerProps) {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -61,6 +66,14 @@ export default function BlogManager() {
     loadPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, searchTerm]); // searchTerm dependency re-fetches on type
+
+  useEffect(() => {
+    if (startInCreateMode) {
+      handleCreatePost();
+      onActionHandled?.(); // Notify parent that action was handled
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startInCreateMode]);
 
   const handleCreatePost = () => {
     setIsCreating(true);
@@ -287,11 +300,10 @@ export default function BlogManager() {
                           {post.title}
                         </h3>
                         <span
-                          className={`inline-flex items-center rounded-none border-2 border-black px-2 py-0.5 font-space text-xs font-bold ${
-                            post.published
-                              ? "bg-green-300 text-black"
-                              : "bg-yellow-300 text-black"
-                          }`}
+                          className={`inline-flex items-center rounded-none border-2 border-black px-2 py-0.5 font-space text-xs font-bold ${post.published
+                            ? "bg-green-300 text-black"
+                            : "bg-yellow-300 text-black"
+                            }`}
                         >
                           {post.published ? "Published" : "Draft"}
                         </span>

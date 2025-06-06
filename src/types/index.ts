@@ -21,6 +21,7 @@ export interface PortfolioItem {
   image_url?: string | null; // URL to an image
   link_url?: string | null; // External link
   tags?: string[] | null; // Array of relevant tags
+  internal_notes?: string | null; // ADDED
   display_order?: number;
   created_at?: string; // ISO 8601 timestamp
   updated_at?: string; // ISO 8601 timestamp
@@ -39,6 +40,7 @@ export interface BlogPost {
   published_at?: string | null; // ISO 8601 timestamp, when the post went live
   tags?: string[] | null; // Array of tags
   views?: number; // View count
+  internal_notes?: string | null; // ADDED
   created_at?: string; // ISO 8601 timestamp
   updated_at?: string; // ISO 8601 timestamp
   // Add other relevant fields like 'category', 'author_name' (if not from user_id), etc.

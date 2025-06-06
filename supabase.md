@@ -337,3 +337,7 @@ $$
 ```
 This RPC function is better for concurrent updates than a direct `select` then `update` from the client.
 $$
+
+
+ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS internal_notes TEXT;
+ALTER TABLE portfolio_items ADD COLUMN IF NOT EXISTS internal_notes TEXT;

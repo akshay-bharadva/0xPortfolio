@@ -37,6 +37,7 @@ export default function BlogEditor({
     tags: "",
     published: false,
     cover_image_url: "",
+    internal_notes: "",
   };
   const [formData, setFormData] = useState(initialFormData);
 
@@ -56,6 +57,8 @@ export default function BlogEditor({
         tags: post.tags?.join(", ") || "",
         published: post.published ?? false,
         cover_image_url: post.cover_image_url || "",
+        internal_notes: post.internal_notes || "",
+
       });
     } else {
       setFormData(initialFormData); // Reset to initial on new post
@@ -107,6 +110,7 @@ export default function BlogEditor({
       tags: tagsArray.length > 0 ? tagsArray : null,
       published: formData.published,
       cover_image_url: formData.cover_image_url || null,
+      internal_notes: formData.internal_notes || null
     };
     await onSave(postDataToSave);
     setIsSaving(false);
@@ -278,6 +282,26 @@ export default function BlogEditor({
                     Uploading image...
                   </p>
                 )}
+              </div>
+              <div>
+                <label
+                  htmlFor="internal_notes"
+                  className="mb-1 block text-sm font-bold text-black"
+                >
+                  Internal Notes (Admin only)
+                </label>
+                <textarea
+                  id="internal_notes"
+                  rows={3}
+                  value={formData.internal_notes}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      internal_notes: e.target.value,
+                    }))
+                  }
+                  className={`${inputClass(false)} resize-y`}
+                />
               </div>
             </div>
 

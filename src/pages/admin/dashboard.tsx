@@ -4,11 +4,25 @@ import { supabase, Session } from "@/supabase/client"; // Session type from Supa
 import AdminDashboardComponent from "@/components/admin/admin-dashboard";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout";
+import type { BlogPost, PortfolioSection, PortfolioItem } from "@/types";
+
+
+export interface DashboardData {
+  stats: {
+    totalPosts: number;
+    publishedPosts: number;
+    draftPosts: number;
+    portfolioSections: number;
+    portfolioItems: number;
+  } | null;
+  recentPosts: Pick<BlogPost, "id" | "title" | "updated_at" | "slug">[];
+}
 
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null); // Use Supabase Session type
+const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null, recentPosts: [] });
 
   useEffect(() => {
     const checkAuthAndAAL = async () => {
@@ -51,6 +65,41 @@ export default function AdminDashboardPage() {
         return; // Stop execution after redirect
       }
       setIsLoading(false); // Successfully authenticated and AAL2 verified
+
+      // Fetch dashboard data only if authenticated and AAL2
+      if (currentSession && aalData?.currentLevel === "aal2") {
+        try {
+          const [
+            { count: totalPosts, error: tpError },
+            { count: publishedPosts, error: ppError },
+            { count: draftPosts, error: dpError },
+            { count: portfolioSections, error: psError },
+            { count: portfolioItems, error: piError },
+            { data: recentPostsData, error: rpError },
+          ] = await Promise.all([
+            supabase.from("blog_posts").select("*", { count: "exact", head: true }),
+            supabase.from("blog_posts").select("*", { count: "exact", head: true }).eq("published", true),
+            supabase.from("blog_posts").select("*", { count: "exact", head: true }).eq("published", false),
+            supabase.from("portfolio_sections").select("*", { count: "exact", head: true }),
+            supabase.from("portfolio_items").select("*", { count: "exact", head: true }),
+            supabase.from("blog_posts").select("id, title, updated_at, slug").order("updated_at", { ascending: false }).limit(3), // Get 3 recent posts
+          ]);
+
+          // Basic error check, can be more granular
+          if (tpError || ppError || dpError || psError || piError || rpError) throw new Error("Failed to fetch some dashboard data.");
+
+          setDashboardData({
+            stats: {
+              totalPosts: totalPosts || 0, publishedPosts: publishedPosts || 0, draftPosts: draftPosts || 0,
+              portfolioSections: portfolioSections || 0, portfolioItems: portfolioItems || 0,
+            },
+            recentPosts: recentPostsData || [],
+          });
+        } catch (error) {
+          console.error("Error fetching dashboard data:", error);
+          // Set empty/default data or show an error message for stats
+        }
+      }
     };
 
     checkAuthAndAAL();
@@ -125,7 +174,7 @@ export default function AdminDashboardPage() {
         variants={pageVariants}
         className="font-space" // Ensure font is applied to the dashboard content area
       >
-        <AdminDashboardComponent onLogout={handleLogout} />
+        <AdminDashboardComponent onLogout={handleLogout} dashboardData={dashboardData} />
       </motion.div>
     </Layout>
   );

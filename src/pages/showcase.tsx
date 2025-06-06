@@ -1,3 +1,4 @@
+// src/pages/showcase.tsx
 import Layout from "@/components/layout";
 import Head from "next/head";
 import { config as appConfig } from "@/lib/config";
@@ -10,15 +11,16 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import Link from "next/link";
 import { BsArrowUpRight } from "react-icons/bs";
-import ExperienceComponent from "@/components/experience"; // Re-use Experience component
+// Removed: import ExperienceComponent from "@/components/experience";
 
-// Markdown components for portfolio item descriptions (similar to blog's, but simpler)
+// Markdown components for portfolio item descriptions (re-use from before)
 const portfolioMarkdownComponents: any = {
   p: ({ node, ...props }: any) => (
     <p className="mb-2 text-sm leading-relaxed text-gray-700" {...props} />
   ),
   a: ({ node, ...props }: any) => (
     <Link
+      href={props.href || "#"}
       className="text-indigo-600 underline hover:bg-yellow-200 hover:text-indigo-800"
       target="_blank"
       rel="noopener noreferrer"
@@ -39,6 +41,150 @@ const portfolioMarkdownComponents: any = {
   ),
   li: ({ node, ...props }: any) => <li className="mb-0.5" {...props} />,
 };
+
+const ExperienceTimelineItem: React.FC<{ item: PortfolioItem }> = ({ item }) => (
+  <div
+    className="group relative mb-10 rounded-none border-2 border-black bg-white p-6 pl-10 shadow-[6px_6px_0px_#000] transition-shadow duration-150 last-of-type:mb-0 hover:shadow-[8px_8px_0px_#4f46e5]"
+  >
+    <span className="absolute -left-[11px] top-7 z-10 h-5 w-5 rotate-45 rounded-none border-2 border-black bg-yellow-400 shadow-[1px_1px_0_#000] transition-colors group-hover:bg-indigo-500" />
+    <div className="mb-1 block">
+      <p className="text-sm font-semibold text-gray-600">
+        {item.subtitle} {/* Use subtitle for OrgName | Date Range */}
+      </p>
+      <h3 className="flex items-center text-2xl font-bold text-black transition-colors group-hover:text-indigo-700">
+        {item.title} {/* Use title for Position */}
+        {item.link_url && (
+          <Link
+            href={item.link_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-1.5 inline-block text-indigo-700 transition-transform group-hover:translate-x-0.5 group-hover:rotate-[15deg]"
+            aria-label={`Visit ${item.subtitle?.split(" | ")[0] || "organization"}`}
+          >
+            <BsArrowUpRight className="size-5" />
+          </Link>
+        )}
+      </h3>
+    </div>
+    {item.description && (
+      <div className="prose prose-sm prose-nb mb-4 max-w-none text-sm leading-relaxed text-gray-700">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={portfolioMarkdownComponents}>
+          {item.description}
+        </ReactMarkdown>
+      </div>
+    )}
+    {item.tags && item.tags.length > 0 && (
+      <div className="mt-4 border-t border-gray-300 pt-3">
+        <p className="mb-2 text-xs font-semibold text-gray-500">
+          Tech Stack:
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {item.tags.map((tag) => (
+            <small
+              key={tag}
+              className="flex-inline rounded-none border border-black bg-gray-200 px-2 py-0.5 text-xs font-semibold text-black shadow-[1px_1px_0px_#000]"
+            >
+              {tag}
+            </small>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+);
+
+const TechToolCard: React.FC<{ item: PortfolioItem }> = ({ item }) => (
+    <div
+      className="group flex h-full flex-col overflow-hidden rounded-none border-2 border-black bg-white p-5 shadow-[4px_4px_0px_#000] transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_#4f46e5]"
+    >
+      {item.image_url && (
+         <div className="mb-3 flex justify-center h-12"> {/* Fixed height for logo consistency */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={item.image_url} alt={`${item.title} logo`} className="max-h-full w-auto object-contain" />
+         </div>
+      )}
+      <h3 className="mb-1 text-xl font-bold text-black">
+        {item.title}
+      </h3>
+      {item.description && (
+         <div className="prose prose-sm prose-nb mb-3 max-w-none flex-grow text-sm leading-relaxed text-gray-700">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={portfolioMarkdownComponents}>
+                {item.description}
+            </ReactMarkdown>
+        </div>
+      )}
+      {item.link_url && (
+        <Link
+          href={item.link_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-auto inline-flex items-center self-start text-sm font-bold text-indigo-700 transition-colors hover:bg-yellow-200 hover:text-indigo-900 hover:underline"
+        >
+          Learn More <BsArrowUpRight className="ml-1.5 size-3.5" />
+        </Link>
+      )}
+    </div>
+);
+
+const ProjectShowcaseCard: React.FC<{ item: PortfolioItem }> = ({ item }) => (
+    <div
+      className="group flex h-full flex-col overflow-hidden rounded-none border-2 border-black bg-white font-space shadow-[6px_6px_0px_#000] transition-all duration-150 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_#4f46e5] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0px_#4f46e5]"
+    >
+      {item.image_url && (
+        <div className="relative aspect-video w-full overflow-hidden border-b-2 border-black">
+             {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+                src={item.image_url}
+                alt={`Cover image for ${item.title}`}
+                className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+            />
+        </div>
+      )}
+      <div className="flex grow flex-col p-5">
+        <h3 className="mb-1 text-xl font-bold text-black transition-colors group-hover:text-indigo-700">
+          {item.title}
+        </h3>
+        {item.subtitle && (
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                {item.subtitle}
+            </p>
+        )}
+        {item.description && (
+          <div className="prose prose-sm prose-nb mb-3 line-clamp-3 max-w-none flex-grow text-sm leading-relaxed text-gray-700">
+             <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={portfolioMarkdownComponents}>
+                {item.description}
+            </ReactMarkdown>
+          </div>
+        )}
+        <div className="mt-auto">
+            {item.link_url && (
+            <Link
+                href={item.link_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="-ml-2 inline-flex items-center rounded-none border-2 border-transparent px-2 py-1 text-sm font-bold text-indigo-700 transition-all hover:border-black hover:bg-yellow-200 hover:text-indigo-900"
+            >
+                View Project <BsArrowUpRight className="ml-1.5" />
+            </Link>
+            )}
+            {item.tags && item.tags.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+                {item.tags.map((tag) => (
+                <span
+                    key={tag}
+                    className="rounded-none border border-black bg-gray-200 px-2 py-0.5 text-xs font-semibold text-black shadow-[1px_1px_0px_#000]"
+                >
+                    {tag}
+                </span>
+                ))}
+            </div>
+            )}
+        </div>
+      </div>
+    </div>
+);
+
 
 export default function ShowcasePage() {
   const { site: siteConfig } = appConfig;
@@ -117,7 +263,7 @@ export default function ShowcasePage() {
           </p>
         </motion.header>
 
-        {sections.length === 0 && !isLoading && (
+        {sections.length === 0 && !isLoading && ( 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -136,7 +282,7 @@ export default function ShowcasePage() {
               </p>
             </div>
           </motion.div>
-        )}
+         )}
 
         {sections.map((section, sectionIndex) => (
           <motion.section
@@ -144,99 +290,70 @@ export default function ShowcasePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 * sectionIndex, duration: 0.4 }}
-            className="mb-12"
+            className="mb-16" // Increased bottom margin for sections
           >
-            <h2 className="mb-6 border-b-2 border-black pb-2 text-3xl font-black text-black">
+            <h2 className="mb-8 border-b-2 border-black pb-3 text-3xl font-black text-black">
               {section.title}
             </h2>
+            
             {section.type === "markdown" && section.content && (
-              <div className="rounded-none border-2 border-black bg-white p-6 shadow-[4px_4px_0_#000]">
+              <div className="rounded-none border-2 border-black bg-white p-6 shadow-[6px_6px_0_#000]">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeRaw]}
-                  components={portfolioMarkdownComponents}
+                  components={portfolioMarkdownComponents} // Use shared components
                 >
                   {section.content}
                 </ReactMarkdown>
               </div>
             )}
-            {section.type === "list_items" &&
-              section.portfolio_items &&
-              section.portfolio_items.length > 0 && (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  {section.portfolio_items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="group flex flex-col overflow-hidden rounded-none border-2 border-black bg-white shadow-[4px_4px_0px_#000] transition-all duration-150 hover:shadow-[6px_6px_0px_#4f46e5]"
-                    >
-                      {item.image_url && (
-                        <div className="relative h-48 w-full overflow-hidden border-b-2 border-black">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={item.image_url}
-                            alt={item.title}
-                            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-                            loading="lazy"
-                          />
-                        </div>
-                      )}
-                      <div className="flex grow flex-col p-5">
-                        <h3 className="mb-1 text-xl font-bold text-black transition-colors group-hover:text-indigo-700">
-                          {item.title}
-                        </h3>
-                        {item.subtitle && (
-                          <p className="mb-2 text-sm font-semibold text-indigo-700">
-                            {item.subtitle}
-                          </p>
-                        )}
-                        {item.description && (
-                          <div className="prose prose-sm mb-3 line-clamp-4 max-w-none text-sm leading-relaxed text-gray-700 prose-p:my-1 prose-ul:my-1">
-                            <ReactMarkdown
-                              remarkPlugins={[remarkGfm]}
-                              rehypePlugins={[rehypeRaw]}
-                              components={portfolioMarkdownComponents}
-                            >
-                              {item.description}
-                            </ReactMarkdown>
-                          </div>
-                        )}
-                        <div className="mt-auto">
-                          {" "}
-                          {/* Push link and tags to bottom */}
-                          {item.link_url && (
-                            <Link
-                              href={item.link_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="-ml-2 inline-flex items-center rounded-none border-2 border-transparent px-2 py-1 text-sm font-bold text-indigo-700 transition-all hover:border-black hover:bg-yellow-200 hover:text-indigo-900"
-                            >
-                              View Project <BsArrowUpRight className="ml-1.5" />
-                            </Link>
-                          )}
-                          {item.tags && item.tags.length > 0 && (
-                            <div className="mt-3 flex flex-wrap gap-1.5">
-                              {item.tags.map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="rounded-none border border-black bg-gray-200 px-2 py-0.5 text-xs font-semibold text-black"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
+
+            {section.type === "list_items" && section.portfolio_items && section.portfolio_items.length > 0 && (
+              <>
+                {/* Experience Section Rendering */}
+                {section.title.toLowerCase().includes("experience") && (
+                   <div className="relative flex flex-col py-10 pl-5 after:absolute after:left-[3px] after:top-0 after:h-full after:w-[3px] after:bg-black after:content-['']">
+                    {section.portfolio_items.map(item => <ExperienceTimelineItem key={item.id} item={item} />)}
+                  </div>
+                )}
+
+                {/* Tech Stack or Tools Section Rendering */}
+                {(section.title.toLowerCase().includes("tech") || section.title.toLowerCase().includes("tool")) && (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {section.portfolio_items.map(item => <TechToolCard key={item.id} item={item} />)}
                     </div>
-                  ))}
-                </div>
-              )}
+                )}
+                
+                {/* Featured Projects Section Rendering */}
+                {section.title.toLowerCase().includes("project") && (
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {section.portfolio_items.map(item => <ProjectShowcaseCard key={item.id} item={item} />)}
+                    </div>
+                )}
+
+                {/* Fallback for other list_items types (can be customized or removed) */}
+                {!(section.title.toLowerCase().includes("experience") || section.title.toLowerCase().includes("tech") || section.title.toLowerCase().includes("tool") || section.title.toLowerCase().includes("project")) && (
+                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        {section.portfolio_items.map((item) => (
+                            <div key={item.id} className="rounded-none border-2 border-black bg-gray-50 p-4 shadow-[3px_3px_0_#000]">
+                                <h4 className="font-bold text-lg mb-1">{item.title}</h4>
+                                {item.subtitle && <p className="text-indigo-600 text-sm font-semibold mb-1">{item.subtitle}</p>}
+                                {item.description && <div className="text-xs text-gray-600"><ReactMarkdown components={portfolioMarkdownComponents}>{item.description}</ReactMarkdown></div>}
+                                {item.link_url && <Link href={item.link_url} target="_blank" className="text-blue-500 hover:underline text-xs">Learn More</Link>}
+                            </div>
+                        ))}
+                     </div>
+                )}
+              </>
+            )}
           </motion.section>
         ))}
-
-        {/* Integrate Experience Section */}
-        <ExperienceComponent />
       </main>
     </Layout>
   );
 }
+
+// Ensure to fill in the loading and error states similarly to how they are in blog/[slug].tsx or blog/index.tsx
+// if (isLoading) { return <Layout>...</Layout>; }
+// if (error) { return <Layout>...</Layout>; }
+// if (sections.length === 0 && !isLoading) { return <Layout>...</Layout>; }
