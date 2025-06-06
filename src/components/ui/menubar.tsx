@@ -7,13 +7,9 @@ import { Check, ChevronRight, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const MenubarMenu = MenubarPrimitive.Menu;
-
 const MenubarGroup = MenubarPrimitive.Group;
-
 const MenubarPortal = MenubarPrimitive.Portal;
-
 const MenubarSub = MenubarPrimitive.Sub;
-
 const MenubarRadioGroup = MenubarPrimitive.RadioGroup;
 
 const Menubar = React.forwardRef<
@@ -38,7 +34,7 @@ const MenubarTrigger = React.forwardRef<
   <MenubarPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex cursor-default select-none items-center rounded-none px-3 py-1.5 text-sm font-bold outline-none focus:bg-yellow-300 focus:text-black data-[state=open]:bg-black data-[state=open]:text-white border border-transparent hover:border-black hover:bg-gray-100 data-[state=open]:border-black", // Adjusted border logic
+      "flex cursor-default select-none items-center rounded-none px-3 py-1.5 text-sm font-bold outline-none focus:bg-yellow-300 focus:text-black data-[state=open]:bg-black data-[state=open]:text-white border border-transparent hover:border-black hover:bg-gray-100 data-[state=open]:border-black",
       className,
     )}
     {...props}
@@ -214,7 +210,7 @@ const MenubarShortcut = ({
     />
   );
 };
-MenubarShortcut.displayName = "MenubarShortcut"; // Corrected typo
+MenubarShortcut.displayName = "MenubarShortcut";
 
 export {
   Menubar,

@@ -29,17 +29,16 @@ export default function SupabaseMFASetup() {
 
       const { data, error: enrollError } = await supabase.auth.mfa.enroll({
         factorType: "totp",
-        issuer: "MyPortfolioAdmin", // Consider making this configurable via .env
+        issuer: "MyPortfolioAdmin",
       });
 
       if (enrollError) {
-        setError(enrollError.message || "Failed to start MFA enrollment.");
+        let errorMessage = enrollError.message || "Failed to start MFA enrollment.";
         if (enrollError.message.includes("Enrolled factors exceed")) {
-          setError(
-            "MFA is already set up or max factors reached. Try MFA Challenge or manage factors in Security.",
-          );
+          errorMessage = "MFA is already set up or max factors reached. Try the MFA Challenge page or manage factors in your Security settings.";
         }
-        setIsLoadingState(false); // Set loading to false on error
+        setError(errorMessage);
+        setIsLoadingState(false);
         return;
       }
 
@@ -88,7 +87,7 @@ export default function SupabaseMFASetup() {
       return;
     }
 
-    await supabase.auth.mfa.getAuthenticatorAssuranceLevel(); // Update AAL state
+    await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
     router.replace("/admin/dashboard");
   };
 
@@ -144,7 +143,7 @@ export default function SupabaseMFASetup() {
       transition={{ duration: 0.3 }}
       className="flex min-h-screen items-center justify-center bg-indigo-100 px-4 py-8 font-space"
     >
-      <div className="w-full max-w-2xl space-y-8 border-2 border-black bg-white p-8 shadow-[8px_8px_0px_#000000]">
+      <div className="w-full max-w-2xl space-y-8 border-2 border-black bg-white p-6 shadow-[8px_8px_0px_#000000] sm:p-8">
         <div className="text-center">
           <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-none border-2 border-black bg-green-500">
             <span className="text-xl text-white">📱</span>
@@ -211,27 +210,29 @@ export default function SupabaseMFASetup() {
                 <p className="mb-3 text-gray-700">
                   Can&apos;t scan? Enter this secret manually:
                 </p>
-                <div className="flex items-center space-x-2 rounded-none border-2 border-black bg-gray-100 p-3">
-                  <code className="flex-1 break-all font-mono font-space text-sm text-gray-800">
+                <div className="flex flex-col items-stretch gap-2 rounded-none border-2 border-black bg-gray-100 p-3 sm:flex-row sm:items-center sm:gap-4">
+                  <code className="flex-1 break-all font-mono text-sm text-gray-800">
                     {showSecret
                       ? manualEntryKey
                       : "••••••••••••••••••••••••••••••••"}
                   </code>
-                  <button
-                    type="button"
-                    onClick={() => setShowSecret(!showSecret)}
-                    className="font-space text-sm font-semibold text-indigo-600 underline hover:text-indigo-800"
-                  >
-                    {showSecret ? "Hide" : "Show"}
-                  </button>
-                  <button
-                    type="button"
-                    id="copySecretButton"
-                    onClick={copySecret}
-                    className="font-space text-sm font-semibold text-indigo-600 underline hover:text-indigo-800"
-                  >
-                    Copy
-                  </button>
+                  <div className="flex gap-x-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowSecret(!showSecret)}
+                      className="font-space text-sm font-semibold text-indigo-600 underline hover:text-indigo-800"
+                    >
+                      {showSecret ? "Hide" : "Show"}
+                    </button>
+                    <button
+                      type="button"
+                      id="copySecretButton"
+                      onClick={copySecret}
+                      className="font-space text-sm font-semibold text-indigo-600 underline hover:text-indigo-800"
+                    >
+                      Copy
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -257,7 +258,7 @@ export default function SupabaseMFASetup() {
                         required
                         maxLength={6}
                         pattern="[0-9]{6}"
-                        className="flex-1 rounded-none border-2 border-black px-3 py-2 text-center font-mono font-space text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="flex-1 rounded-none border-2 border-black px-3 py-2 text-center font-mono text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="123456"
                         value={otp}
                         onChange={(e) =>
@@ -301,7 +302,7 @@ export default function SupabaseMFASetup() {
                     <button
                       type="button"
                       onClick={async () => {
-                        await supabase.auth.signOut(); // Sign out before redirecting to login
+                        await supabase.auth.signOut();
                         router.push("/admin/login");
                       }}
                       className="flex-1 rounded-none border-2 border-black bg-gray-200 px-4 py-3 font-space font-bold text-black shadow-[4px_4px_0px_#000] transition-all duration-150 hover:translate-x-[2px] hover:translate-y-[2px] hover:bg-gray-300 hover:shadow-[2px_2px_0px_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"

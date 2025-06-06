@@ -1,30 +1,29 @@
 import Link from "next/link";
 import { PropsWithChildren, useState, useEffect } from "react";
 import { AiOutlineCopyrightCircle } from "react-icons/ai";
-import { BsArrowUpRight, BsGithub, BsLinkedin } from "react-icons/bs"; // Added LinkedIn
+import { BsArrowUpRight, BsGithub, BsLinkedin } from "react-icons/bs";
 
-type FooterProps = PropsWithChildren; // Renamed Props to FooterProps
+type FooterProps = PropsWithChildren;
 
 export default function Footer({ children }: FooterProps) {
-  const [currentTime, setCurrentTime] = useState(""); // Store formatted time
+  const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
       setCurrentTime(
-        `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`,
-        // Removed seconds for less frequent visual updates: :${now.getSeconds().toString().padStart(2, '0')}
+        `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
       );
     };
-    updateClock(); // Initial call
-    const timerId = setInterval(updateClock, 1000 * 60); // Update every minute
+    updateClock();
+    const timerId = setInterval(updateClock, 1000 * 60);
     return () => clearInterval(timerId);
   }, []);
 
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mb-20 flex flex-col items-center justify-center gap-4 border-t-2 border-black pt-10 font-space text-sm text-black md:my-8 md:mb-0">
+    <footer className="mb-20 flex flex-col items-center justify-center gap-4 border-t-2 border-black pt-10 font-space text-sm text-black md:mb-8">
       <div className="mb-4 flex gap-4">
         <Link
           href="https://github.com/akshay-bharadva"
@@ -51,7 +50,7 @@ export default function Footer({ children }: FooterProps) {
           Built with{" "}
           <Link
             href="https://nextjs.org/"
-            rel="noopener noreferrer" // Corrected rel
+            rel="noopener noreferrer"
             target="_blank"
             className="font-bold text-indigo-700 underline transition-colors hover:bg-yellow-200 hover:text-indigo-900"
           >
@@ -63,7 +62,7 @@ export default function Footer({ children }: FooterProps) {
           View Source on{" "}
           <a
             href="https://github.com/akshay-bharadva/akshay-bharadva.github.io"
-            rel="noopener noreferrer" // Corrected rel
+            rel="noopener noreferrer"
             target="_blank"
             className="font-bold text-indigo-700 underline transition-colors hover:bg-yellow-200 hover:text-indigo-900"
           >
@@ -78,5 +77,7 @@ export default function Footer({ children }: FooterProps) {
         {currentTime}
       </p>
     </footer>
+
+
   );
 }

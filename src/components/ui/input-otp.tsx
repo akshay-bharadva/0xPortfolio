@@ -1,14 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { OTPInput, OTPInputContext, OTPInputProps } from "input-otp"; // Import OTPInputProps
+import { OTPInput, OTPInputContext, OTPInputProps } from "input-otp";
 import { Dot } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
-  OTPInputProps // Use OTPInputProps for better type safety
+  OTPInputProps
 >(({ className, containerClassName, ...props }, ref) => (
   <OTPInput
     ref={ref}
@@ -41,12 +41,9 @@ const InputOTPSlot = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "relative flex h-10 w-10 items-center justify-center border-y-2 border-r-2 border-black text-sm transition-all first:rounded-l-none first:border-l-2 last:rounded-r-none font-mono", // Added font-mono
-        // Ensure all slots have a left border for consistency unless it's the very first one of the group
-        // This logic is tricky with `first:border-l-2`. Let's ensure all have 2px border on all sides.
+        "relative flex h-10 w-10 items-center justify-center border-y-2 border-r-2 border-black font-mono text-sm transition-all first:rounded-l-none first:border-l-2 last:rounded-r-none",
         "border-l-2 border-black",
-        isActive &&
-          "z-10 ring-2 ring-indigo-500 ring-offset-0 border-indigo-500",
+        isActive && "z-10 ring-2 ring-indigo-500 ring-offset-0 border-indigo-500",
         className,
       )}
       {...props}

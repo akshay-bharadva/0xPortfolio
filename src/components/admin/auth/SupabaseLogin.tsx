@@ -1,4 +1,4 @@
-"use client"; // Still good practice for component files in App Router, not strictly needed for Pages Router components
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/supabase/client";
@@ -12,7 +12,6 @@ export default function SupabaseLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  // Redirect if already fully authenticated
   useEffect(() => {
     const checkAuth = async () => {
       const {
@@ -82,7 +81,6 @@ export default function SupabaseLogin() {
       setIsLoading(false);
       setError("Login failed. Please try again.");
     }
-    // setIsLoading(false); // Navigation will occur, so this isn't strictly needed here
   };
 
   const stepVariants = {
@@ -101,7 +99,7 @@ export default function SupabaseLogin() {
       transition={{ duration: 0.3 }}
       className="flex min-h-screen items-center justify-center bg-indigo-100 px-4 font-space"
     >
-      <div className="w-full max-w-md space-y-8 border-2 border-black bg-white p-8 shadow-[8px_8px_0px_#000000]">
+      <div className="w-full max-w-md space-y-8 border-2 border-black bg-white p-6 shadow-[8px_8px_0px_#000000] sm:p-8">
         <div className="text-center">
           <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-none border-2 border-black bg-indigo-500">
             <span className="text-xl text-white">🔐</span>

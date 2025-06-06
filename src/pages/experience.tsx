@@ -1,11 +1,6 @@
-// This page seems to be for a dedicated experience section.
-// If experience is now part of the "Showcase" page, this might be redundant or could be repurposed.
-// Assuming it's still a valid page for now.
-
-// import Container from "@/components/container"; // Container is part of Layout
-import ExperienceComponent from "@/components/experience"; // Renamed Experience to ExperienceComponent
+import ExperienceComponent from "@/components/experience";
 import Layout from "@/components/layout";
-import Head from "next/head"; // Import Head
+import Head from "next/head";
 import { config as appConfig } from "@/lib/config";
 
 export default function ExperiencePage() {

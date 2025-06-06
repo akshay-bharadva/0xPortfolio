@@ -1,35 +1,36 @@
-// This file is identical to the one in src/hooks, likely a duplicate.
-// Keeping one in src/hooks and deleting this one is recommended.
-// For now, I will assume src/hooks/use-mobile.tsx is the canonical one.
-// If this file is indeed used, it should be:
-"use client"; // Add "use client" if it's used in client components directly and not just by other client components
+"use client";
+
 import * as React from "react";
 
-const MOBILE_BREAKPOINT = 768; // Define as a constant
+const MOBILE_BREAKPOINT = 768;
 
-export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
-    undefined,
-  );
+export function useIsMobile(): boolean {
+const [isMobile, setIsMobile] = React.useState<boolean>(() => {
+if (typeof window !== "undefined") {
+return window.innerWidth < MOBILE_BREAKPOINT;
+}
+return false;
+});
 
-  React.useEffect(() => {
-    // Ensure window is defined (runs only on client-side)
-    if (typeof window === "undefined") {
-      return;
-    }
+React.useEffect(() => {
+if (typeof window === "undefined") {
+return;
+}
 
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-    const onChange = () => {
-      setIsMobile(mql.matches); // Use mql.matches for direct boolean
-    };
+const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
 
-    // Initial check
-    onChange();
+const handleChange = () => {
+  setIsMobile(mql.matches);
+};
 
-    mql.addEventListener("change", onChange);
+handleChange();
 
-    return () => mql.removeEventListener("change", onChange);
-  }, []); // Empty dependency array ensures this runs once on mount
+mql.addEventListener("change", handleChange);
 
-  return isMobile === undefined ? false : isMobile; // Return false during SSR or before hydration
+return () => mql.removeEventListener("change", handleChange);
+
+
+}, []);
+
+return isMobile;
 }

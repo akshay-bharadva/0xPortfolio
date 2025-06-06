@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { PropsWithChildren, ReactNode } from "react"; // Removed ReactElement as ReactNode covers it
+import { PropsWithChildren, ReactNode } from "react";
 import { BsArrowUpRight } from "react-icons/bs";
 
-type ExperienceProps = PropsWithChildren; // Renamed Props to ExperienceProps
+type ExperienceProps = PropsWithChildren;
 
 interface ExperienceItem {
-  // Renamed ExperienceType to ExperienceItem for clarity
   orgName: string;
   orgHref: string;
   position: string;
@@ -16,7 +15,6 @@ interface ExperienceItem {
 }
 
 const MY_EXPERIENCES: ExperienceItem[] = [
-  // Renamed MyExperience to MY_EXPERIENCES
   {
     orgName: "SigNoz Inc.",
     orgHref: "https://signoz.io/",
@@ -30,15 +28,15 @@ const MY_EXPERIENCES: ExperienceItem[] = [
         <br />
         As a developer with SigNoz, I developed pages such as{" "}
         <span className="font-semibold text-indigo-600">
-          &ldquo;/pricing&rdquo;
+          “/pricing”
         </span>
         ,{" "}
         <span className="font-semibold text-indigo-600">
-          &ldquo;/team&rdquo;
+          “/team”
         </span>
         ,{" "}
         <span className="font-semibold text-indigo-600">
-          &ldquo;/enterprise&rdquo;
+          “/enterprise”
         </span>
         , and many more.
         <br />
@@ -55,7 +53,7 @@ const MY_EXPERIENCES: ExperienceItem[] = [
         .
       </>
     ),
-    techStack: ["React.js", "Docusaurus", "TypeScript"], // Added TypeScript as it's common
+    techStack: ["React.js", "Docusaurus", "TypeScript"],
   },
   {
     orgName: "Digipie Technologies LLP.",
@@ -86,7 +84,7 @@ const MY_EXPERIENCES: ExperienceItem[] = [
   },
   {
     orgName: "Finlogic Technologies India Pvt. Ltd.",
-    orgHref: "https://njtechnologies.in/", // Assuming this is the correct current URL
+    orgHref: "https://njtechnologies.in/",
     position: "Senior Executive, Fullstack Developer",
     from: "May 2022",
     to: "Nov 2022",
@@ -158,18 +156,15 @@ export default function Experience({ children }: ExperienceProps) {
         Experience
       </h2>
       <div className="relative flex flex-col py-10 pl-5 after:absolute after:left-[3px] after:top-0 after:h-full after:w-[3px] after:bg-black after:content-['']">
-        {" "}
-        {/* Timeline thicker */}
         {MY_EXPERIENCES.map((experience) => (
           <div
-            key={`${experience.orgName}-${experience.position}-${experience.from}`} // More unique key
+            key={`${experience.orgName}- ${experience.position}`}
             className="group relative mb-10 rounded-none border-2 border-black bg-white p-6 pl-10 shadow-[6px_6px_0px_#000] transition-shadow duration-150 last-of-type:mb-0 hover:shadow-[8px_8px_0px_#4f46e5]"
           >
-            <span className="absolute -left-[11px] top-7 z-10 h-5 w-5 rotate-45 rounded-none border-2 border-black bg-yellow-400 shadow-[1px_1px_0_#000] transition-colors group-hover:bg-indigo-500" />{" "}
-            {/* Added shadow to marker, z-10 */}
+            <span className="absolute -left-[11px] top-7 z-10 h-5 w-5 rotate-45 rounded-none border-2 border-black bg-yellow-400 shadow-[1px_1px_0_#000] transition-colors group-hover:bg-indigo-500" />
             <Link
               href={experience.orgHref}
-              className="mb-1 block" // Make entire header block clickable for org
+              className="mb-1 block"
               rel="noopener noreferrer nofollow"
               target="_blank"
             >
@@ -178,16 +173,13 @@ export default function Experience({ children }: ExperienceProps) {
               </p>
               <h3 className="flex items-center text-2xl font-bold text-black transition-colors group-hover:text-indigo-700">
                 {experience.orgName}{" "}
-                <BsArrowUpRight className="ml-1.5 inline-block h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:rotate-[15deg]" />{" "}
-                {/* Subtle rotate effect */}
+                <BsArrowUpRight className="ml-1.5 inline-block h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:rotate-[15deg]" />
               </h3>
             </Link>
             <p className="mb-3 text-lg font-semibold text-gray-800">
               {experience.position}
             </p>
-            <div className="prose prose-sm mb-4 max-w-none text-sm leading-relaxed text-gray-700 prose-p:my-1 prose-ul:my-1">
-              {" "}
-              {/* Basic prose styling for desc */}
+            <div className="prose prose-sm prose-nb mb-4 max-w-none text-sm leading-relaxed text-gray-700">
               {experience.desc}
             </div>
             {experience.techStack.length > 0 && (
@@ -210,6 +202,6 @@ export default function Experience({ children }: ExperienceProps) {
           </div>
         ))}
       </div>
-    </section>
+    </section >
   );
 }

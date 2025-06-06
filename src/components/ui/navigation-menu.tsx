@@ -30,7 +30,7 @@ const NavigationMenuList = React.forwardRef<
   <NavigationMenuPrimitive.List
     ref={ref}
     className={cn(
-      "group flex flex-1 list-none items-center justify-center space-x-1 border-2 border-black rounded-none p-1 bg-white shadow-[2px_2px_0px_#000]",
+      "group flex flex-1 list-none items-center justify-center space-x-1 rounded-none border-2 border-black bg-white p-1 shadow-[2px_2px_0px_#000]",
       className,
     )}
     {...props}
@@ -41,7 +41,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
 const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-10 w-max items-center justify-center rounded-none border-2 border-transparent bg-background px-4 py-2 text-sm font-bold transition-colors hover:border-black hover:bg-yellow-300 hover:text-black focus:border-black focus:bg-yellow-200 focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:border-black data-[active]:bg-black data-[state=open]:bg-black data-[active]:text-white data-[state=open]:text-white", // Added data-[state=open]:border-black
+  "group inline-flex h-10 w-max items-center justify-center rounded-none border-2 border-transparent bg-background px-4 py-2 text-sm font-bold transition-colors hover:border-black hover:bg-yellow-300 hover:text-black focus:border-black focus:bg-yellow-200 focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:border-black data-[active]:bg-black data-[state=open]:bg-black data-[active]:text-white data-[state=open]:text-white",
 );
 
 const NavigationMenuTrigger = React.forwardRef<

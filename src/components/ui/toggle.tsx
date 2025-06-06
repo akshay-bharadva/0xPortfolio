@@ -12,7 +12,7 @@ const toggleVariants = cva(
     variants: {
       variant: {
         default: "bg-transparent hover:bg-yellow-200",
-        outline: "bg-transparent hover:bg-yellow-200", // Outline is already bordered by base
+        outline: "bg-transparent hover:bg-yellow-200",
       },
       size: {
         default: "h-10 min-w-10 px-3",
@@ -30,7 +30,8 @@ const toggleVariants = cva(
 const Toggle = React.forwardRef<
   React.ElementRef<typeof TogglePrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
-    VariantProps<typeof toggleVariants>
+  VariantProps<typeof toggleVariants>
+
 >(({ className, variant, size, ...props }, ref) => (
   <TogglePrimitive.Root
     ref={ref}
@@ -38,7 +39,6 @@ const Toggle = React.forwardRef<
     {...props}
   />
 ));
-
 Toggle.displayName = TogglePrimitive.Root.displayName;
 
 export { Toggle, toggleVariants };

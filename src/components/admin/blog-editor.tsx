@@ -13,9 +13,8 @@ interface BlogEditorProps {
   onCancel: () => void;
 }
 
-const bucketName = process.env.NEXT_PUBLIC_BUCKET_NAME || "blog-assets"; // Default if not set
+const bucketName = process.env.NEXT_PUBLIC_BUCKET_NAME || "blog-assets";
 
-// Helper for input class
 const inputClass = (hasError: boolean) =>
   `w-full px-3 py-2 border-2 rounded-none focus:outline-none focus:ring-2 focus:ring-indigo-500 font-space ${hasError ? "border-red-500" : "border-black"}`;
 
@@ -58,10 +57,9 @@ export default function BlogEditor({
         published: post.published ?? false,
         cover_image_url: post.cover_image_url || "",
         internal_notes: post.internal_notes || "",
-
       });
     } else {
-      setFormData(initialFormData); // Reset to initial on new post
+      setFormData(initialFormData);
     }
   }, [post]);
 
@@ -73,6 +71,7 @@ export default function BlogEditor({
       .replace(/-+/g, "-")
       .trim();
   };
+
   const handleTitleChange = (title: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -80,6 +79,7 @@ export default function BlogEditor({
       slug: !prev.slug || !post?.id ? generateSlug(title) : prev.slug,
     }));
   };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.title.trim()) newErrors.title = "Title is required";
@@ -136,7 +136,6 @@ export default function BlogEditor({
     try {
       const canvas = document.createElement("canvas");
       if (!(canvas.toDataURL("image/webp").indexOf("data:image/webp") === 0)) {
-        // Browser does not support webp, use original file type for compression
         options.fileType = file.type;
       }
       compressedFile = await imageCompression(file, options);
@@ -146,11 +145,10 @@ export default function BlogEditor({
         ...prev,
         image_upload: "Image compression failed. Trying original.",
       }));
-      // Fallback to original file if compression fails critically, or re-throw to stop upload
     }
 
     const fileName = `${Date.now()}_${compressedFile.name.replace(/\s+/g, "_")}`;
-    const filePath = `blog_images/${fileName}`; // Ensure this path is consistent with storage policies
+    const filePath = `blog_images/${fileName}`;
 
     const { data, error: uploadError } = await supabase.storage
       .from(bucketName)
@@ -173,7 +171,7 @@ export default function BlogEditor({
     if (forCoverImage) {
       setFormData((prev) => ({ ...prev, cover_image_url: imageUrl }));
     } else {
-      const imageMarkdown = `\n![${compressedFile.name.split(".")[0] || "image"}](${imageUrl})\n`; // Use filename without extension as alt text
+      const imageMarkdown = `\n![${compressedFile.name.split(".")[0] || "image"}](${imageUrl})\n`;
       setFormData((prev) => ({
         ...prev,
         content: prev.content + imageMarkdown,
@@ -189,7 +187,7 @@ export default function BlogEditor({
     if (file) {
       handleImageUpload(file, forCoverImage);
     }
-    if (event.target) event.target.value = ""; // Reset file input
+    if (event.target) event.target.value = "";
   };
 
   return (
@@ -199,8 +197,8 @@ export default function BlogEditor({
       className="mx-auto max-w-6xl font-space"
     >
       <div className="overflow-hidden rounded-none border-2 border-black bg-white">
-        <div className="border-b-2 border-black bg-gray-100 px-6 py-4">
-          <div className="flex items-center justify-between">
+        <div className="border-b-2 border-black bg-gray-100 px-4 py-4 sm:px-6">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-xl font-bold text-black">
               {post?.id ? "Edit Post" : "Create New Post"}
             </h2>
@@ -223,7 +221,7 @@ export default function BlogEditor({
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
               <div>
@@ -415,7 +413,7 @@ export default function BlogEditor({
             </div>
           </div>
 
-          <div className="mt-8 flex justify-end space-x-3 border-t-2 border-black pt-6">
+          <div className="mt-8 flex flex-col justify-end gap-3 border-t-2 border-black pt-6 sm:flex-row sm:space-x-3">
             <button
               type="button"
               onClick={onCancel}

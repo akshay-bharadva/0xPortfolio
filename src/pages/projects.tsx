@@ -1,7 +1,6 @@
-// import Container from "@/components/container"; // Container is part of Layout
 import Layout from "@/components/layout";
-import ProjectsComponent from "@/components/projects"; // Renamed Projects to ProjectsComponent
-import Head from "next/head"; // Import Head
+import ProjectsComponent from "@/components/projects";
+import Head from "next/head";
 import { config as appConfig } from "@/lib/config";
 
 export default function ProjectsPage() {

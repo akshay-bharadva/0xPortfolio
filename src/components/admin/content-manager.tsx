@@ -5,10 +5,9 @@ import { motion } from "framer-motion";
 import { supabase } from "@/supabase/client";
 import type { PortfolioSection, PortfolioItem } from "@/types";
 
-// Helper classes
 const inputClass =
   "block w-full border-2 border-black rounded-none p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white font-space";
-const textareaClass = `${inputClass} resize-none`;
+const textareaClass = `${inputClass} resize-y`;
 const selectClass = `${inputClass} bg-white`;
 const buttonPrimaryClass =
   "bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-none font-bold border-2 border-black shadow-[3px_3px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1.5px_1.5px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-150 font-space";
@@ -22,7 +21,7 @@ const buttonActionSmallClass = (
   `text-xs ${actionColor} hover:${hoverActionColor} ${textColor} px-2 py-1 rounded-none font-semibold border border-black shadow-[1px_1px_0px_#000] active:translate-x-[0.5px] active:translate-y-[0.5px] active:shadow-none transition-all font-space`;
 
 interface ContentManagerProps {
-  startInCreateMode?: boolean; // For creating a new section
+  startInCreateMode?: boolean;
   onActionHandled?: () => void;
 }
 
@@ -38,21 +37,14 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
   const [editingItem, setEditingItem] = useState<PortfolioItem | null>(null);
   const [isCreatingItemInSection, setIsCreatingItemInSection] = useState<
     string | null
-  >(null); // Holds section_id
+  >(null);
 
   const fetchPortfolioContent = async () => {
     setIsLoading(true);
     setError(null);
     const { data: sectionsData, error: sectionsError } = await supabase
       .from("portfolio_sections")
-      .select(
-        `
-        *,
-        portfolio_items (
-          *
-        )
-      `,
-      )
+      .select(`*, portfolio_items (*)`)
       .order("display_order", { ascending: true })
       .order("display_order", {
         foreignTable: "portfolio_items",
@@ -80,16 +72,16 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
   };
 
   useEffect(() => {
-    if (startInCreateMode) { // Assuming 'startInCreateMode' means create a new section
+    if (startInCreateMode) {
       handleCreateNewSection();
       onActionHandled?.();
     }
-  }, []);
+  }, [startInCreateMode, onActionHandled]);
 
   const handleSaveSection = async (sectionData: Partial<PortfolioSection>) => {
     setIsLoading(true);
     setError(null);
-    const { user_id, portfolio_items, id, ...saveData } = sectionData; // Exclude portfolio_items, id, user_id from direct save
+    const { user_id, portfolio_items, id, ...saveData } = sectionData;
 
     let response;
     if (editingSection?.id) {
@@ -123,8 +115,6 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
     )
       return;
     setIsLoading(true);
-    // Note: Supabase cascade delete should handle items if foreign key is set up with ON DELETE CASCADE.
-    // If not, items need to be deleted manually first.
     const { error: deleteError } = await supabase
       .from("portfolio_sections")
       .delete()
@@ -141,7 +131,7 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
   ) => {
     setIsLoading(true);
     setError(null);
-    const { user_id, id, ...saveData } = itemData; // Exclude id, user_id
+    const { user_id, id, ...saveData } = itemData;
 
     let response;
     if (editingItem?.id) {
@@ -199,7 +189,7 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
       className="mx-auto font-space"
     >
       <div className="rounded-none border-2 border-black bg-white">
-        <div className="flex items-center justify-between border-b-2 border-black bg-gray-100 px-6 py-4">
+        <div className="flex flex-col items-stretch gap-3 border-b-2 border-black bg-gray-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <h2 className="text-xl font-bold text-black">Portfolio Content</h2>
           <button
             onClick={handleCreateNewSection}
@@ -210,7 +200,7 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
         </div>
 
         {(isCreatingSection || editingSection) && (
-          <div className="border-b-2 border-black bg-yellow-50 p-6">
+          <div className="border-b-2 border-black bg-yellow-50 p-4 sm:p-6">
             <h3 className="mb-3 text-lg font-bold text-black">
               {editingSection
                 ? `Edit Section: ${editingSection.title}`
@@ -227,8 +217,7 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
                   ) as PortfolioSection["type"],
                   content: (formData.get("section_content") as string) || null,
                   display_order:
-                    parseInt(formData.get("section_display_order") as string) ||
-                    0,
+                    parseInt(formData.get("section_display_order") as string) || 0,
                 };
                 handleSaveSection(data);
               }}
@@ -248,7 +237,6 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
               >
                 <option value="markdown">Markdown</option>
                 <option value="list_items">List of Items</option>
-                {/* <option value="gallery">Gallery</option> */}
               </select>
               <textarea
                 name="section_content"
@@ -287,20 +275,20 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
           </div>
         )}
 
-        <div className="space-y-6 p-6">
+        <div className="space-y-6 p-4 sm:p-6">
           {sections.map((section) => (
             <div
               key={section.id}
               className="rounded-none border-2 border-black bg-white p-4 shadow-[4px_4px_0_rgba(0,0,0,0.05)]"
             >
-              <div className="mb-3 flex items-center justify-between border-b border-black pb-2">
+              <div className="mb-3 flex flex-col items-start gap-2 border-b border-black pb-2 md:flex-row md:items-center md:justify-between">
                 <h3 className="text-lg font-bold text-black">
                   {section.title}{" "}
-                  <span className="text-sm font-normal text-gray-600">
+                  <span className="block text-sm font-normal text-gray-600 sm:inline">
                     (Type: {section.type}, Order: {section.display_order})
                   </span>
                 </h3>
-                <div className="space-x-2">
+                <div className="flex w-full shrink-0 gap-2 md:w-auto">
                   <button
                     onClick={() => {
                       setEditingSection(section);
@@ -308,21 +296,14 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
                       setEditingItem(null);
                       setIsCreatingItemInSection(null);
                     }}
-                    className={buttonActionSmallClass(
-                      "bg-blue-300",
-                      "bg-blue-400",
-                    )}
+                    className={`${buttonActionSmallClass("bg-blue-300", "bg-blue-400")} flex-1 md:flex-none`}
                   >
                     Edit Section
                   </button>
                   <button
                     onClick={() => handleDeleteSection(section.id)}
                     disabled={isLoading}
-                    className={buttonActionSmallClass(
-                      "bg-red-300",
-                      "bg-red-400",
-                      "text-white",
-                    )}
+                    className={`${buttonActionSmallClass("bg-red-300", "bg-red-400", "text-white")} flex-1 md:flex-none`}
                   >
                     Del Section
                   </button>
@@ -348,8 +329,8 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
                         key={item.id}
                         className="rounded-none border-2 border-black bg-gray-50 p-3"
                       >
-                        <div className="flex items-start justify-between">
-                          <div>
+                        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-start sm:justify-between">
+                          <div className="flex-1">
                             <p className="font-bold text-black">{item.title}</p>
                             <p className="text-sm font-semibold text-indigo-700">
                               {item.subtitle}
@@ -360,7 +341,7 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
                               </p>
                             )}
                           </div>
-                          <div className="ml-2 shrink-0 space-x-1">
+                          <div className="ml-0 shrink-0 space-x-1 sm:ml-2">
                             <button
                               onClick={() => {
                                 setEditingItem(item);
@@ -368,21 +349,14 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
                                 setEditingSection(null);
                                 setIsCreatingSection(false);
                               }}
-                              className={buttonActionSmallClass(
-                                "bg-blue-300",
-                                "bg-blue-400",
-                              )}
+                              className={buttonActionSmallClass("bg-blue-300", "bg-blue-400")}
                             >
                               Edit
                             </button>
                             <button
                               onClick={() => handleDeleteItem(item.id)}
                               disabled={isLoading}
-                              className={buttonActionSmallClass(
-                                "bg-red-300",
-                                "bg-red-400",
-                                "text-white",
-                              )}
+                              className={buttonActionSmallClass("bg-red-300", "bg-red-400", "text-white")}
                             >
                               Del
                             </button>
@@ -422,89 +396,28 @@ export default function ContentManager({ startInCreateMode, onActionHandled }: C
                         const formData = new FormData(e.currentTarget);
                         const data: Partial<PortfolioItem> = {
                           title: formData.get("item_title") as string,
-                          subtitle:
-                            (formData.get("item_subtitle") as string) || null,
-                          description:
-                            (formData.get("item_description") as string) || null,
+                          subtitle: (formData.get("item_subtitle") as string) || null,
+                          description: (formData.get("item_description") as string) || null,
                           link_url: (formData.get("item_link") as string) || null,
-                          image_url:
-                            (formData.get("item_image_url") as string) || null,
-                          tags:
-                            (formData.get("item_tags") as string)
-                              ?.split(",")
-                              .map((t) => t.trim())
-                              .filter((t) => t) || null,
-                          display_order:
-                            parseInt(
-                              formData.get("item_display_order") as string,
-                            ) || 0,
-                          internal_notes:
-                            (formData.get("item_internal_notes") as string) || null,
+                          image_url: (formData.get("item_image_url") as string) || null,
+                          tags: (formData.get("item_tags") as string)?.split(",").map((t) => t.trim()).filter((t) => t) || null,
+                          display_order: parseInt(formData.get("item_display_order") as string) || 0,
+                          internal_notes: (formData.get("item_internal_notes") as string) || null,
                         };
                         handleSaveItem(data, section.id);
                       }}
                     >
-                      <input
-                        name="item_title"
-                        placeholder="Item Title"
-                        defaultValue={editingItem?.title || ""}
-                        required
-                        className={inputClass}
-                      />
-                      <input
-                        name="item_subtitle"
-                        placeholder="Item Subtitle (optional)"
-                        defaultValue={editingItem?.subtitle || ""}
-                        className={inputClass}
-                      />
-                      <textarea
-                        name="item_description"
-                        placeholder="Item Description (Markdown supported, optional)"
-                        defaultValue={editingItem?.description || ""}
-                        className={textareaClass}
-                        rows={3}
-                      />
-                      <input
-                        name="item_link"
-                        placeholder="Item Link URL (e.g. https://example.com)"
-                        defaultValue={editingItem?.link_url || ""}
-                        className={inputClass}
-                      />
-                      <input
-                        name="item_image_url"
-                        placeholder="Item Image URL (e.g. https://.../image.png)"
-                        defaultValue={editingItem?.image_url || ""}
-                        className={inputClass}
-                      />
-                      <input
-                        name="item_tags"
-                        placeholder="Tags (comma-separated, optional)"
-                        defaultValue={editingItem?.tags?.join(", ") || ""}
-                        className={inputClass}
-                      />
-                      <input
-                        type="number"
-                        name="item_display_order"
-                        placeholder="Order"
-                        defaultValue={
-                          editingItem?.display_order?.toString() || "0"
-                        }
-                        className={inputClass}
-                      />
-                      <textarea
-                        name="item_internal_notes"
-                        placeholder="Internal Notes (Admin only, optional)"
-                        defaultValue={editingItem?.internal_notes || ""}
-                        className={textareaClass}
-                        rows={2}
-                      />
+                      <input name="item_title" placeholder="Item Title" defaultValue={editingItem?.title || ""} required className={inputClass} />
+                      <input name="item_subtitle" placeholder="Item Subtitle (optional)" defaultValue={editingItem?.subtitle || ""} className={inputClass} />
+                      <textarea name="item_description" placeholder="Item Description (Markdown supported, optional)" defaultValue={editingItem?.description || ""} className={textareaClass} rows={3} />
+                      <input name="item_link" placeholder="Item Link URL (e.g. https://example.com)" defaultValue={editingItem?.link_url || ""} className={inputClass} />
+                      <input name="item_image_url" placeholder="Item Image URL (e.g. https://.../image.png)" defaultValue={editingItem?.image_url || ""} className={inputClass} />
+                      <input name="item_tags" placeholder="Tags (comma-separated, optional)" defaultValue={editingItem?.tags?.join(", ") || ""} className={inputClass} />
+                      <input type="number" name="item_display_order" placeholder="Order" defaultValue={editingItem?.display_order?.toString() || "0"} className={inputClass} />
+                      <textarea name="item_internal_notes" placeholder="Internal Notes (Admin only, optional)" defaultValue={editingItem?.internal_notes || ""} className={textareaClass} rows={2} />
 
                       <div className="mt-2 flex gap-2">
-                        <button
-                          type="submit"
-                          className={buttonPrimaryClass}
-                          disabled={isLoading}
-                        >
+                        <button type="submit" className={buttonPrimaryClass} disabled={isLoading}>
                           Save Item
                         </button>
                         <button

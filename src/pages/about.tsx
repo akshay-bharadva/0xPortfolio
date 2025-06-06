@@ -1,10 +1,9 @@
-// import Container from "@/components/container"; // Container is part of Layout
 import Hero from "@/components/hero";
 import Layout from "@/components/layout";
 import Me from "@/components/me";
 import Technology from "@/components/technology";
 import Tools from "@/components/tools";
-import Head from "next/head"; // Import Head for page-specific metadata
+import Head from "next/head";
 import { config as appConfig } from "@/lib/config";
 
 export default function AboutPage() {
@@ -24,9 +23,7 @@ export default function AboutPage() {
         <meta property="og:type" content="profile" />
         <meta property="profile:first_name" content="Akshay" />
         <meta property="profile:last_name" content="Bharadva" />
-        <meta property="profile:username" content="akshay-bharadva" />{" "}
-        {/* e.g., GitHub username */}
-        {/* <meta property="profile:gender" content="male" /> */}
+        <meta property="profile:username" content="akshay-bharadva" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
         <link rel="canonical" href={pageUrl} />

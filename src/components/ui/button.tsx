@@ -9,15 +9,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90", // primary can be black or a vibrant color
-        destructive:
-          "border-black bg-destructive text-destructive-foreground hover:bg-destructive/90", // Ensure black border if destructive color is light
-        outline:
-          "border-black bg-background hover:bg-accent hover:text-accent-foreground", // Base border-2 border-black applies
-        secondary:
-          "border-black bg-secondary text-secondary-foreground hover:bg-secondary/80", // Example: bg-gray-200 hover:bg-gray-300 text-black
-        ghost:
-          "border-transparent shadow-none hover:translate-x-0 hover:translate-y-0 hover:bg-accent hover:text-accent-foreground hover:shadow-none active:translate-x-0 active:translate-y-0",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "border-black bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border-black bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "border-black bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "border-transparent shadow-none hover:translate-x-0 hover:translate-y-0 hover:bg-accent hover:text-accent-foreground hover:shadow-none active:translate-x-0 active:translate-y-0",
         link: "border-transparent text-primary underline-offset-4 shadow-none hover:translate-x-0 hover:translate-y-0 hover:underline hover:shadow-none active:translate-x-0 active:translate-y-0",
       },
       size: {

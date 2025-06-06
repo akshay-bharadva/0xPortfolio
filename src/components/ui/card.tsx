@@ -24,7 +24,7 @@ const CardHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex flex-col space-y-1.5 p-6 border-b-2 border-black",
+      "flex flex-col space-y-1.5 border-b-2 border-black p-6",
       className,
     )}
     {...props}
@@ -33,10 +33,10 @@ const CardHeader = React.forwardRef<
 CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef<
-  HTMLHeadingElement, // Changed to HTMLHeadingElement
-  React.HTMLAttributes<HTMLHeadingElement> // Changed to HTMLHeadingElement
+  HTMLHeadingElement,
+  React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, children, ...props }, ref) => (
-  <h3 // Changed div to h3 for semantic title
+  <h3
     ref={ref}
     className={cn(
       "text-2xl font-bold leading-none tracking-tight text-black",
@@ -50,10 +50,10 @@ const CardTitle = React.forwardRef<
 CardTitle.displayName = "CardTitle";
 
 const CardDescription = React.forwardRef<
-  HTMLParagraphElement, // Changed to HTMLParagraphElement
-  React.HTMLAttributes<HTMLParagraphElement> // Changed to HTMLParagraphElement
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => (
-  <p // Changed div to p for semantic description
+  <p
     ref={ref}
     className={cn("text-sm text-gray-700", className)}
     {...props}
@@ -67,7 +67,7 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} /> // pt-0 if header has pb-6
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
 ));
 CardContent.displayName = "CardContent";
 
@@ -78,9 +78,9 @@ const CardFooter = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-center p-6 pt-0 border-t-2 border-black mt-4",
+      "flex items-center p-6 pt-0",
       className,
-    )} // pt-0 if content has pb-6
+    )}
     {...props}
   />
 ));

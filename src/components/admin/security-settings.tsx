@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/supabase/client";
 import type { Factor } from "@supabase/supabase-js";
-import { useRouter } from "next/router"; // Correct import for Pages Router
+import { useRouter } from "next/router";
 
 const buttonPrimaryClass =
   "bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 rounded-none font-bold border-2 border-black shadow-[3px_3px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1.5px_1.5px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-150 font-space";
@@ -21,11 +21,11 @@ export default function SecuritySettings() {
   const loadFactors = async () => {
     setIsLoading(true);
     setError(null);
-    setSuccess(null); // Clear success message on reload
+    setSuccess(null);
     const { data, error: factorsError } = await supabase.auth.mfa.listFactors();
     if (factorsError) {
       setError("Failed to load MFA factors: " + factorsError.message);
-      setFactors([]); // Ensure factors is empty on error
+      setFactors([]);
     } else {
       setFactors(data?.totp || []);
     }
@@ -56,16 +56,13 @@ export default function SecuritySettings() {
       setIsLoading(false);
     } else {
       setSuccess("MFA method removed successfully.");
-      await loadFactors(); // Refresh factor list and loading state
-      // Check AAL and redirect if necessary AFTER factors are reloaded and state is updated
+      await loadFactors();
       const { data: aalData } =
         await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       if (aalData?.currentLevel !== "aal2") {
-        // If no longer aal2, or no factors left to achieve aal2, user might need to re-setup or login.
-        // Consider specific UX: e.g. if all factors removed, redirect to setup-mfa or login.
-        router.push("/admin/login"); // A safe default to re-evaluate auth state.
+        router.push("/admin/login");
       } else {
-        setIsLoading(false); // Factors reloaded, still aal2
+        setIsLoading(false);
       }
     }
   };
@@ -86,7 +83,7 @@ export default function SecuritySettings() {
           </p>
         </div>
 
-        <div className="space-y-8 p-6">
+        <div className="space-y-8 p-4 sm:p-6">
           {success && (
             <div className="rounded-none border-2 border-green-500 bg-green-100 p-4">
               <p className="text-sm font-semibold text-green-700">{success}</p>
@@ -98,8 +95,8 @@ export default function SecuritySettings() {
             </div>
           )}
 
-          <div className="rounded-none border-2 border-black bg-gray-50 p-6">
-            <div className="mb-4 flex items-center justify-between">
+          <div className="rounded-none border-2 border-black bg-gray-50 p-4 sm:p-6">
+            <div className="mb-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h3 className="text-lg font-bold text-black">
                   Two-Factor Authentication (TOTP)
@@ -139,7 +136,7 @@ export default function SecuritySettings() {
                 {factors.map((factor) => (
                   <div
                     key={factor.id}
-                    className="flex items-center justify-between rounded-none border border-gray-400 bg-white p-3"
+                    className="flex flex-col items-start gap-2 rounded-none border border-gray-400 bg-white p-3 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
                       <p className="text-sm font-semibold">
@@ -152,7 +149,7 @@ export default function SecuritySettings() {
                     </div>
                     <button
                       onClick={() => handleUnenroll(factor.id)}
-                      className={`${buttonDangerClass} px-2 py-1 text-xs`}
+                      className={`${buttonDangerClass} w-full px-2 py-1 text-xs sm:w-auto`}
                       disabled={isLoading}
                     >
                       {isLoading ? "Removing..." : "Remove"}
@@ -171,7 +168,7 @@ export default function SecuritySettings() {
               <button
                 onClick={() => router.push("/admin/setup-mfa")}
                 className={`${buttonPrimaryClass} mt-4`}
-                disabled={isLoading} // Disable if already loading factors/unenrolling
+                disabled={isLoading}
               >
                 {factors.length > 0
                   ? "Add Another Authenticator"
@@ -180,7 +177,7 @@ export default function SecuritySettings() {
             )}
           </div>
 
-          <div className="rounded-none border-2 border-black bg-gray-50 p-6">
+          <div className="rounded-none border-2 border-black bg-gray-50 p-4 sm:p-6">
             <h3 className="mb-4 text-lg font-bold text-black">Security Tips</h3>
             <ul className="space-y-2 text-sm text-gray-700">
               {[
@@ -191,7 +188,7 @@ export default function SecuritySettings() {
                 "Regularly review active sessions if your auth provider supports it.",
               ].map((tip) => (
                 <li key={tip} className="flex items-start">
-                  <span className="mr-2 font-bold text-indigo-600">•</span>
+                  <span className="mr-2 pt-1 font-bold text-indigo-600">•</span>
                   {tip}
                 </li>
               ))}

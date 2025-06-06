@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button"; // Import Button for consistent action styling
+import { Button } from "@/components/ui/button"
 
 const ToastProvider = ToastPrimitives.Provider;
 
@@ -32,7 +32,7 @@ const toastVariants = cva(
       variant: {
         default: "bg-white text-black",
         destructive:
-          "destructive group border-red-500 bg-red-100 text-red-700 shadow-[4px_4px_0px_#b91c1c]", // Darker red shadow for destructive
+          "destructive group border-red-500 bg-red-100 text-red-700 shadow-[4px_4px_0px_#b91c1c]",
       },
     },
     defaultVariants: {
@@ -44,7 +44,7 @@ const toastVariants = cva(
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-    VariantProps<typeof toastVariants>
+  VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
   return (
     <ToastPrimitives.Root
@@ -60,14 +60,14 @@ const ToastAction = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Action>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action> & {
     children?: React.ReactNode;
-  } // Ensure children is part of props
+  }
 >(({ className, children, ...props }, ref) => (
   <ToastPrimitives.Action asChild ref={ref} {...props}>
     <Button
-      variant="default" // Or a specific toast action variant if defined in Button
+      variant="default"
       size="sm"
       className={cn(
-        "group-[.destructive]:bg-red-600 group-[.destructive]:hover:bg-red-700 group-[.destructive]:text-white group-[.destructive]:border-black", // Destructive variant specific styling
+        "group-[.destructive]:bg-red-600 group-[.destructive]:hover:bg-red-700 group-[.destructive]:text-white group-[.destructive]:border-black",
         className,
       )}
     >
@@ -88,7 +88,7 @@ const ToastClose = React.forwardRef<
       "group-[.destructive]:text-red-700/70 group-[.destructive]:hover:text-red-700 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600 group-[.destructive]:hover:bg-red-200/50",
       className,
     )}
-    toast-close="" // Keep this attribute if it's used by Radix for functionality
+    toast-close=""
     {...props}
   >
     <X className="size-4" />

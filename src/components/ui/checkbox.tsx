@@ -14,9 +14,7 @@ const Checkbox = React.forwardRef<
     ref={ref}
     className={cn(
       "peer h-4 w-4 shrink-0 rounded-none border-2 border-black ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary",
-      // data-[state=checked]:border-primary might be desired if primary color is different from black
-      // If primary is black, data-[state=checked]:border-black is redundant due to base border-black
-      props.checked && "data-[state=checked]:border-black", // Ensure border is black when checked if primary is not black
+      props.checked && "data-[state=checked]:border-black",
       className,
     )}
     {...props}

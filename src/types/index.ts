@@ -1,53 +1,48 @@
-// --- Portfolio Content Types ---
 export interface PortfolioSection {
-  id: string; // UUID
-  user_id?: string; // UUID, foreign key to auth.users
+  id: string;
+  user_id?: string;
   title: string;
-  type: "markdown" | "list_items" | "gallery"; // Add more types as needed
-  content?: string | null; // For 'markdown' type
+  type: "markdown" | "list_items" | "gallery";
+  content?: string | null;
   display_order?: number;
-  created_at?: string; // ISO 8601 timestamp
-  updated_at?: string; // ISO 8601 timestamp
-  portfolio_items?: PortfolioItem[]; // Populated for sections of type 'list_items' or 'gallery'
+  created_at?: string;
+  updated_at?: string;
+  portfolio_items?: PortfolioItem[];
 }
 
 export interface PortfolioItem {
-  id: string; // UUID
-  section_id: string; // UUID, foreign key to portfolio_sections
-  user_id?: string; // UUID, foreign key to auth.users
+  id: string;
+  section_id: string;
+  user_id?: string;
   title: string;
   subtitle?: string | null;
-  description?: string | null; // Can be Markdown
-  image_url?: string | null; // URL to an image
-  link_url?: string | null; // External link
-  tags?: string[] | null; // Array of relevant tags
-  internal_notes?: string | null; // ADDED
+  description?: string | null;
+  image_url?: string | null;
+  link_url?: string | null;
+  tags?: string[] | null;
+  internal_notes?: string | null;
   display_order?: number;
-  created_at?: string; // ISO 8601 timestamp
-  updated_at?: string; // ISO 8601 timestamp
+  created_at?: string;
+  updated_at?: string;
 }
 
-// --- Blog Post Type ---
 export interface BlogPost {
-  id: string; // UUID
-  user_id?: string; // UUID, foreign key to auth.users
+  id: string;
+  user_id?: string;
   title: string;
-  slug: string; // URL-friendly identifier, unique
-  excerpt?: string | null; // Short summary
-  content?: string | null; // Full content in Markdown
-  cover_image_url?: string | null; // URL to a cover image
-  published?: boolean; // True if the post is live
-  published_at?: string | null; // ISO 8601 timestamp, when the post went live
-  tags?: string[] | null; // Array of tags
-  views?: number; // View count
-  internal_notes?: string | null; // ADDED
-  created_at?: string; // ISO 8601 timestamp
-  updated_at?: string; // ISO 8601 timestamp
-  // Add other relevant fields like 'category', 'author_name' (if not from user_id), etc.
+  slug: string;
+  excerpt?: string | null;
+  content?: string | null;
+  cover_image_url?: string | null;
+  published?: boolean;
+  published_at?: string | null;
+  tags?: string[] | null;
+  views?: number;
+  internal_notes?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
-// --- GitHub Repository Type (Simplified) ---
-// Based on common fields from GitHub API for public repos
 export interface GitHubRepoOwner {
   login: string;
   avatar_url: string;
@@ -61,30 +56,18 @@ export interface GitHubRepo {
   html_url: string;
   description: string | null;
   fork: boolean;
-  private: boolean; // Should always be false for public display
+  private: boolean;
   archived: boolean;
   stargazers_count: number;
   watchers_count: number;
   forks_count: number;
   open_issues_count: number;
-  language: string | null; // Primary language
-  languages_url?: string; // URL to fetch language breakdown
-  topics?: string[]; // Topics/tags assigned on GitHub
-  created_at: string; // ISO 8601 timestamp
-  updated_at: string; // ISO 8601 timestamp
-  pushed_at: string; // ISO 8601 timestamp
-  homepage?: string | null; // Link to project's homepage
+  language: string | null;
+  languages_url?: string;
+  topics?: string[];
+  created_at: string;
+  updated_at: string;
+  pushed_at: string;
+  homepage?: string | null;
   owner: GitHubRepoOwner;
-  // Add other fields as needed
 }
-
-// --- Admin User/Session (Example, Supabase handles this) ---
-// If you were managing sessions manually (not recommended with Supabase Auth)
-// export interface AdminSession {
-//   user: {
-//     id: string;
-//     username: string; // Or email
-//   };
-//   isMfaVerified: boolean;
-//   expiresAt: number; // Timestamp
-// }

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { supabase, Session } from "@/supabase/client"; // Session type from Supabase
+import { supabase, Session } from "@/supabase/client";
 import AdminDashboardComponent from "@/components/admin/admin-dashboard";
 import { motion } from "framer-motion";
 import Layout from "@/components/layout";
-import type { BlogPost, PortfolioSection, PortfolioItem } from "@/types";
-
+import type { BlogPost } from "@/types";
 
 export interface DashboardData {
   stats: {
@@ -21,16 +20,13 @@ export interface DashboardData {
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const [session, setSession] = useState<Session | null>(null); // Use Supabase Session type
-const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null, recentPosts: [] });
+  const [session, setSession] = useState<Session | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null, recentPosts: [] });
 
   useEffect(() => {
     const checkAuthAndAAL = async () => {
-      setIsLoading(true); // Start loading indicator
-      const {
-        data: { session: currentSession },
-        error: sessionError,
-      } = await supabase.auth.getSession();
+      setIsLoading(true);
+      const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
 
       if (sessionError) {
         console.error("Error fetching session:", sessionError);
@@ -45,11 +41,9 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
         return;
       }
 
-      const { data: aalData, error: aalError } =
-        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       if (aalError) {
         console.error("Error fetching AAL status:", aalError);
-        // Critical error fetching AAL, might indicate issues. Redirect to login for safety.
         router.replace("/admin/login");
         return;
       }
@@ -58,15 +52,12 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
         if (aalData?.currentLevel === "aal1" && aalData?.nextLevel === "aal2") {
           router.replace("/admin/mfa-challenge");
         } else {
-          // This could mean MFA is not setup, or some other state.
-          // Login page will handle redirection to setup-mfa if needed.
           router.replace("/admin/login");
         }
-        return; // Stop execution after redirect
+        return;
       }
-      setIsLoading(false); // Successfully authenticated and AAL2 verified
+      setIsLoading(false);
 
-      // Fetch dashboard data only if authenticated and AAL2
       if (currentSession && aalData?.currentLevel === "aal2") {
         try {
           const [
@@ -82,10 +73,9 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
             supabase.from("blog_posts").select("*", { count: "exact", head: true }).eq("published", false),
             supabase.from("portfolio_sections").select("*", { count: "exact", head: true }),
             supabase.from("portfolio_items").select("*", { count: "exact", head: true }),
-            supabase.from("blog_posts").select("id, title, updated_at, slug").order("updated_at", { ascending: false }).limit(3), // Get 3 recent posts
+            supabase.from("blog_posts").select("id, title, updated_at, slug").order("updated_at", { ascending: false }).limit(3),
           ]);
 
-          // Basic error check, can be more granular
           if (tpError || ppError || dpError || psError || piError || rpError) throw new Error("Failed to fetch some dashboard data.");
 
           setDashboardData({
@@ -97,7 +87,6 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
           });
         } catch (error) {
           console.error("Error fetching dashboard data:", error);
-          // Set empty/default data or show an error message for stats
         }
       }
     };
@@ -106,15 +95,10 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
-        setSession(newSession); // Update session state on any auth change
+        setSession(newSession);
         if (event === "SIGNED_OUT" || !newSession) {
           router.replace("/admin/login");
-        } else if (
-          event === "USER_UPDATED" ||
-          event === "TOKEN_REFRESHED" ||
-          event === "MFA_CHALLENGE_VERIFIED"
-        ) {
-          // Re-check AAL on these events as auth state might have changed significantly
+        } else if ( event === "USER_UPDATED" || event === "TOKEN_REFRESHED" || event === "MFA_CHALLENGE_VERIFIED" ) {
           checkAuthAndAAL();
         }
       },
@@ -127,12 +111,7 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
 
   const handleLogout = async () => {
     setIsLoading(true);
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Error signing out:", error);
-      setIsLoading(false); // Allow UI to respond if sign out fails
-    }
-    // onAuthStateChange listener handles redirection to login
+    await supabase.auth.signOut();
   };
 
   const pageVariants = {
@@ -143,7 +122,6 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
   };
 
   if (isLoading || !session) {
-    // Show loader if loading or session is null (e.g., during initial check)
     return (
       <Layout>
         <motion.div
@@ -163,7 +141,6 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
     );
   }
 
-  // If session exists and not loading (implies AAL2 was met)
   return (
     <Layout>
       <motion.div
@@ -172,7 +149,7 @@ const [dashboardData, setDashboardData] = useState<DashboardData>({ stats: null,
         animate="animate"
         exit="exit"
         variants={pageVariants}
-        className="font-space" // Ensure font is applied to the dashboard content area
+        className="font-space"
       >
         <AdminDashboardComponent onLogout={handleLogout} dashboardData={dashboardData} />
       </motion.div>

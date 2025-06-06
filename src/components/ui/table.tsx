@@ -5,7 +5,9 @@ import { cn } from "@/lib/utils";
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
+
 >(({ className, ...props }, ref) => (
+
   <div className="relative w-full overflow-auto rounded-none border-2 border-black shadow-[4px_4px_0px_#000]">
     <table
       ref={ref}
@@ -16,10 +18,13 @@ const Table = React.forwardRef<
 ));
 Table.displayName = "Table";
 
+
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
+
 >(({ className, ...props }, ref) => (
+
   <thead
     ref={ref}
     className={cn(
@@ -31,22 +36,28 @@ const TableHeader = React.forwardRef<
 ));
 TableHeader.displayName = "TableHeader";
 
+
 const TableBody = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
+
 >(({ className, ...props }, ref) => (
+
   <tbody
     ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)} // Last row in body won't have bottom border
+    className={cn("[&_tr:last-child]:border-0", className)}
     {...props}
   />
 ));
 TableBody.displayName = "TableBody";
 
+
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
+
 >(({ className, ...props }, ref) => (
+
   <tfoot
     ref={ref}
     className={cn(
@@ -58,14 +69,17 @@ const TableFooter = React.forwardRef<
 ));
 TableFooter.displayName = "TableFooter";
 
+
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
+
 >(({ className, ...props }, ref) => (
+
   <tr
     ref={ref}
     className={cn(
-      "border-b-2 border-black transition-colors hover:bg-yellow-100 data-[state=selected]:bg-yellow-200 last:border-b-0", // Ensure last row in a section (like thead, tbody) doesn't force a border if not needed
+      "border-b-2 border-black transition-colors hover:bg-yellow-100 data-[state=selected]:bg-yellow-200 last:border-b-0",
       className,
     )}
     {...props}
@@ -73,14 +87,17 @@ const TableRow = React.forwardRef<
 ));
 TableRow.displayName = "TableRow";
 
+
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
+
 >(({ className, ...props }, ref) => (
+
   <th
     ref={ref}
     className={cn(
-      "h-12 px-4 text-left align-middle font-bold text-white [&:has([role=checkbox])]:pr-0 border-r-2 border-gray-600 last:border-r-0", // Border for separating header cells
+      "h-12 px-4 text-left align-middle font-bold text-white [&:has([role=checkbox])]:pr-0 border-r-2 border-gray-600 last:border-r-0",
       className,
     )}
     {...props}
@@ -88,10 +105,13 @@ const TableHead = React.forwardRef<
 ));
 TableHead.displayName = "TableHead";
 
+
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
+
 >(({ className, ...props }, ref) => (
+
   <td
     ref={ref}
     className={cn(
@@ -103,10 +123,13 @@ const TableCell = React.forwardRef<
 ));
 TableCell.displayName = "TableCell";
 
+
 const TableCaption = React.forwardRef<
   HTMLTableCaptionElement,
   React.HTMLAttributes<HTMLTableCaptionElement>
+
 >(({ className, ...props }, ref) => (
+
   <caption
     ref={ref}
     className={cn("mt-4 text-sm text-gray-700 font-semibold", className)}
@@ -114,6 +137,7 @@ const TableCaption = React.forwardRef<
   />
 ));
 TableCaption.displayName = "TableCaption";
+
 
 export {
   Table,

@@ -20,7 +20,7 @@ const buttonActionClass = (
 
 interface BlogManagerProps {
   startInCreateMode?: boolean;
-  onActionHandled?: () => void; // Callback to parent
+  onActionHandled?: () => void;
 }
 
 export default function BlogManager({ startInCreateMode, onActionHandled }: BlogManagerProps) {
@@ -48,7 +48,6 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
     if (filterStatus === "published") query = query.eq("published", true);
     else if (filterStatus === "draft") query = query.eq("published", false);
 
-    // Full-text search could be more efficient for large datasets, but ilike is simpler for now.
     if (searchTerm) query = query.ilike("title", `%${searchTerm}%`);
 
     const { data, error: fetchError } = await query;
@@ -64,16 +63,14 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
 
   useEffect(() => {
     loadPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterStatus, searchTerm]); // searchTerm dependency re-fetches on type
+  }, [filterStatus, searchTerm]);
 
   useEffect(() => {
     if (startInCreateMode) {
       handleCreatePost();
-      onActionHandled?.(); // Notify parent that action was handled
+      onActionHandled?.();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startInCreateMode]);
+  }, [startInCreateMode, onActionHandled]);
 
   const handleCreatePost = () => {
     setIsCreating(true);
@@ -112,12 +109,9 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
             "Failed to delete cover image from storage:",
             storageError,
           );
-          // Optionally notify user, but proceed with post deletion
         }
       }
     }
-
-    // TODO: Consider deleting content images referenced in markdown (complex).
 
     const { error: deleteError } = await supabase
       .from("blog_posts")
@@ -126,7 +120,7 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
     if (deleteError) {
       setError("Failed to delete post: " + deleteError.message);
     } else {
-      await loadPosts(); // Refresh list
+      await loadPosts();
     }
     setIsLoading(false);
   };
@@ -134,7 +128,6 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
   const handleSavePost = async (postData: Partial<BlogPost>) => {
     setIsLoading(true);
     setError(null);
-    // Ensure user_id is not part of dataToSave if it exists on postData, as it's usually handled by RLS/triggers.
     const { id, user_id, created_at, updated_at, ...dataToSave } = postData;
 
     let response;
@@ -161,8 +154,7 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
 
     setIsCreating(false);
     setEditingPost(null);
-    await loadPosts(); // Refresh list
-    // No explicit setIsLoading(false) here, as loadPosts will set it.
+    await loadPosts();
   };
 
   const handleCancel = () => {
@@ -185,18 +177,12 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
     if (updateError) {
       setError("Failed to update status: " + updateError.message);
     } else {
-      await loadPosts(); // Refresh list
+      await loadPosts();
     }
     setIsLoading(false);
   };
 
-  if (
-    isLoading &&
-    posts.length === 0 &&
-    !isCreating &&
-    !editingPost &&
-    !error
-  ) {
+  if (isLoading && posts.length === 0 && !isCreating && !editingPost && !error) {
     return (
       <div className="p-4 font-space font-semibold text-black">
         Loading blog posts...
@@ -204,7 +190,6 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
     );
   }
   if (error && !isCreating && !editingPost) {
-    // Only show main error if not in editor
     return (
       <div className="rounded-none border-2 border-red-500 bg-red-100 p-4 font-space font-semibold text-red-700">
         {error}
@@ -221,9 +206,6 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
       />
     );
   }
-
-  // No need for client-side filtering if Supabase query handles it
-  // const filteredPosts = posts;
 
   return (
     <div className="space-y-6 font-space">
@@ -290,8 +272,8 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
                   transition={{ duration: 0.2 }}
                   className="p-4 hover:bg-yellow-50 md:p-6"
                 >
-                  <div className="flex flex-col items-start justify-between md:flex-row">
-                    <div className="mb-4 min-w-0 flex-1 md:mb-0 md:mr-4">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                    <div className="min-w-0 flex-1 md:mr-4">
                       <div className="mb-2 flex items-center space-x-3">
                         <h3
                           className="truncate text-lg font-bold text-black"
@@ -320,22 +302,12 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
                             {new Date(post.created_at).toLocaleDateString()}
                           </span>
                         )}
-                        {post.updated_at &&
-                          post.updated_at !== post.created_at && (
-                            <span>
-                              Updated:{" "}
-                              {new Date(post.updated_at).toLocaleDateString()}
-                            </span>
-                          )}
                         <span>Slug: /{post.slug}</span>
                         <span>Views: {post.views || 0}</span>
                       </div>
                       {post.tags && post.tags.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-1">
-                          {post.tags.map(
-                            (
-                              tag: string, // No index needed if tag is unique for key
-                            ) => (
+                          {post.tags.map((tag: string) => (
                               <span
                                 key={tag}
                                 className="inline-flex items-center rounded-none border border-black bg-gray-200 px-2 py-1 font-space text-xs text-black"
@@ -347,7 +319,7 @@ export default function BlogManager({ startInCreateMode, onActionHandled }: Blog
                         </div>
                       )}
                     </div>
-                    <div className="flex shrink-0 items-center space-x-2">
+                    <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:space-x-2">
                       <button
                         onClick={() =>
                           togglePostStatus(post.id, post.published || false)

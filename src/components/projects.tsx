@@ -3,10 +3,9 @@ import { PropsWithChildren, useState, useEffect } from "react";
 import { BsArrowUpRight } from "react-icons/bs";
 import ProjectCard from "./project-card";
 import { Button } from "@/components/ui/button";
-import type { GitHubRepo } from "@/types"; // Import specific type
-import { useRouter } from "next/navigation";
+import type { GitHubRepo } from "@/types";
 
-type ProjectsProps = PropsWithChildren; // Renamed Props
+type ProjectsProps = PropsWithChildren;
 
 const GITHUB_USERNAME = `akshay-bharadva`; // Use a constant for username
 const GITHUB_REPOS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=9&type=owner`; // Fetch only owner repos
@@ -15,19 +14,12 @@ export default function Projects({ children }: ProjectsProps) {
   const [projects, setProjects] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch(GITHUB_REPOS_URL, {
-      // Optional: Add headers if needed, e.g., for higher rate limits with a token
-      // headers: {
-      //   'Authorization': `token YOUR_GITHUB_TOKEN`
-      // }
-    })
+    fetch(GITHUB_REPOS_URL)
       .then(async (response) => {
-        // Make async to await response.json()
         if (!response.ok) {
           const errorData = await response
             .json()
@@ -39,7 +31,6 @@ export default function Projects({ children }: ProjectsProps) {
         return response.json();
       })
       .then((data: GitHubRepo[]) => {
-        // Type the data
         const filteredProjects = data
           .filter(
             (p) =>
@@ -49,14 +40,13 @@ export default function Projects({ children }: ProjectsProps) {
               !p.archived &&
               p.name !== GITHUB_USERNAME,
           )
-          // Sorting by `stargazers_count` then `updated_at` might be more relevant than description length
           .sort(
             (a, b) =>
               (b.stargazers_count || 0) - (a.stargazers_count || 0) ||
               new Date(b.updated_at).getTime() -
-                new Date(a.updated_at).getTime(),
+              new Date(a.updated_at).getTime(),
           );
-        setProjects(filteredProjects.slice(0, 9)); // Ensure only 9 are shown even if API returns more due to filtering changes
+        setProjects(filteredProjects.slice(0, 9));
       })
       .catch((err) => {
         console.error("Failed to fetch projects:", err);
@@ -103,30 +93,25 @@ export default function Projects({ children }: ProjectsProps) {
       )}
       {!loading && !error && projects.length > 0 && (
         <>
-          {" "}
-          {/* Use Fragment shorthand */}
           <div className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>
           <div className="text-center">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() =>
-                router.push(
-                  `https://github.com/${GITHUB_USERNAME}?tab=repositories`,
-                )
-              }
-              className="text-md"
-            >
-              More on GitHub <BsArrowUpRight className="ml-1.5 inline" />
-            </Button>
+            <Link href={
+              `https://github.com/${GITHUB_USERNAME}?tab=repositories`
+
+            } passHref legacyBehavior>
+              <Button asChild variant="outline" size="lg" className="text-md">
+                <a>More on GitHub <BsArrowUpRight className="ml-1.5 inline" /></a>
+              </Button>
+            </Link>
           </div>
         </>
-      )}
+      )
+      }
       {children && <div className="mt-8">{children}</div>}
-    </section>
+    </section >
   );
 }

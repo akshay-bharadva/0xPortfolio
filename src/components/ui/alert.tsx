@@ -8,9 +8,9 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-black bg-background text-foreground", // Explicitly add border-black for default
+        default: "border-black bg-background text-foreground",
         destructive:
-          "border-destructive bg-destructive/20 text-destructive-foreground [&>svg]:text-destructive-foreground", // Adjusted bg for better contrast, kept border-destructive
+          "border-destructive bg-destructive/20 text-destructive-foreground [&>svg]:text-destructive-foreground",
       },
     },
     defaultVariants: {
@@ -33,10 +33,10 @@ const Alert = React.forwardRef<
 Alert.displayName = "Alert";
 
 const AlertTitle = React.forwardRef<
-  HTMLHeadingElement, // More semantic for a title
+  HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <h5 // Use h5 or appropriate heading level
+  <h5
     ref={ref}
     className={cn("mb-1 font-bold leading-none tracking-tight", className)}
     {...props}
@@ -45,10 +45,10 @@ const AlertTitle = React.forwardRef<
 AlertTitle.displayName = "AlertTitle";
 
 const AlertDescription = React.forwardRef<
-  HTMLParagraphElement, // More semantic for a description
+  HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <div // Keep div if it can contain more than just <p>
+  <div
     ref={ref}
     className={cn("text-sm [&_p]:leading-relaxed", className)}
     {...props}

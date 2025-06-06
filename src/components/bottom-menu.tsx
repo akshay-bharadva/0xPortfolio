@@ -4,13 +4,12 @@ import {
   AiOutlineHome,
   AiFillHome,
   AiOutlineAppstore,
-  AiFillAppstore, // Or BsGrid3X3GapFill for a different showcase icon
+  AiFillAppstore,
   AiOutlineExperiment,
-  AiFillExperiment, // Or BsBriefcaseFill
+  AiFillExperiment,
   AiOutlineRead,
-  AiFillRead, // Or BsBookFill
-  AiOutlineUser,
-} from "react-icons/ai"; // Example icons, choose what fits best
+  AiFillRead,
+} from "react-icons/ai";
 import { FaUser, FaRegUser } from "react-icons/fa";
 
 import { IconType } from "react-icons";
@@ -22,7 +21,6 @@ type NavLink = {
   activeIcon: IconType;
 };
 
-// Re-map your links to include icons
 const NavLinks: NavLink[] = [
   {
     href: "/",
@@ -33,25 +31,25 @@ const NavLinks: NavLink[] = [
   {
     href: "/showcase",
     label: "Showcase",
-    icon: AiOutlineAppstore, // Icon for "Showcase"
+    icon: AiOutlineAppstore,
     activeIcon: AiFillAppstore,
   },
   {
     href: "/projects",
     label: "Projects",
-    icon: AiOutlineExperiment, // Icon for "Projects"
+    icon: AiOutlineExperiment,
     activeIcon: AiFillExperiment,
   },
   {
     href: "/blog",
     label: "Blog",
-    icon: AiOutlineRead, // Icon for "Blog"
+    icon: AiOutlineRead,
     activeIcon: AiFillRead,
   },
   {
     href: "/about",
     label: "About",
-    icon: FaRegUser, // Icon for "About" (profile-like)
+    icon: FaRegUser,
     activeIcon: FaUser,
   },
 ];
@@ -73,17 +71,16 @@ export default function BottomNavBar() {
               href={link.href}
               key={link.href}
               className={`group flex flex-col items-center justify-center rounded-none p-2 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white
-                ${
-                  isActive
-                    ? "text-indigo-700" // Active color, could be black too
-                    : "text-gray-600 hover:text-black"
+            ${isActive
+                  ? "text-indigo-700"
+                  : "text-gray-600 hover:text-black"
                 }`}
               aria-label={link.label}
             >
-              <IconComponent className="mb-0.5 text-2xl sm:text-3xl" />
+              <IconComponent className="mb-0.5 text-2xl" />
               <span
                 className={`text-xs font-semibold 
-                  ${isActive ? "text-indigo-700" : "text-gray-500 group-hover:text-black"}`}
+              ${isActive ? "text-indigo-700" : "text-gray-500 group-hover:text-black"}`}
               >
                 {link.label}
               </span>
@@ -92,5 +89,7 @@ export default function BottomNavBar() {
         })}
       </div>
     </nav>
+
+
   );
 }

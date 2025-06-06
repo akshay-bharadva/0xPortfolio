@@ -1,21 +1,19 @@
-"use client"; // This hook is client-side only
+"use client";
 
 import * as React from "react";
 
-const MOBILE_BREAKPOINT = 768; // pixels
+const MOBILE_BREAKPOINT = 768; // Standard breakpoint for md in Tailwind
 
 export function useIsMobile(): boolean {
-  // Explicit return type
   const [isMobile, setIsMobile] = React.useState<boolean>(() => {
-    // Initial state based on window width if available (for client-side rendering)
+    // Initial state for client-side rendering
     if (typeof window !== "undefined") {
       return window.innerWidth < MOBILE_BREAKPOINT;
     }
-    return false; // Default for SSR (will be updated on client)
+    return false; // Default for SSR
   });
 
   React.useEffect(() => {
-    // Ensure this effect runs only on the client
     if (typeof window === "undefined") {
       return;
     }
@@ -32,7 +30,7 @@ export function useIsMobile(): boolean {
     mql.addEventListener("change", handleChange);
 
     return () => mql.removeEventListener("change", handleChange);
-  }, []); // Empty dependency array ensures this runs once on mount and cleans up on unmount
+  }, []); // Empty dependency array ensures this runs once
 
   return isMobile;
 }

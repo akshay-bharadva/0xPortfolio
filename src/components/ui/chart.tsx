@@ -5,13 +5,12 @@ import * as RechartsPrimitive from "recharts";
 
 import { cn } from "@/lib/utils";
 
-// Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
 
 export type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode;
-    icon?: React.ComponentType<{ className?: string }>; // Allow className for icon
+    icon?: React.ComponentType<{ className?: string }>;
   } & (
     | { color?: string; theme?: never }
     | { color?: never; theme: Record<keyof typeof THEMES, string> }
@@ -52,8 +51,7 @@ const ChartContainer = React.forwardRef<
         data-chart={chartId}
         ref={ref}
         className={cn(
-          "flex aspect-video justify-center text-xs border-2 border-black rounded-none shadow-[4px_4px_0px_#000] p-2 bg-white",
-          // Recharts specific overrides for Neo-Brutalism
+          "flex aspect-video justify-center text-xs rounded-none border-2 border-black bg-white p-2 shadow-[4px_4px_0px_#000]",
           "[&_.recharts-cartesian-axis-tick_text]:fill-black [&_.recharts-cartesian-axis-line]:stroke-black [&_.recharts-cartesian-axis-line]:stroke-2",
           "[&_.recharts-cartesian-grid_line]:stroke-gray-400/50 [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-gray-400/50 [&_.recharts-cartesian-grid_line]:stroke-dasharray-none [&_.recharts-cartesian-grid_line]:stroke-2",
           "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-black [&_.recharts-curve.recharts-tooltip-cursor]:stroke-2",
@@ -82,7 +80,7 @@ ChartContainer.displayName = "Chart";
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([_, Cfg]) => Cfg.theme || Cfg.color, // Renamed config to Cfg to avoid conflict
+    ([_, Cfg]) => Cfg.theme || Cfg.color,
   );
 
   if (!colorConfig.length) {
@@ -138,7 +136,7 @@ const ChartTooltipContent = React.forwardRef<
       labelFormatter,
       labelClassName,
       formatter,
-      color, // explicit color prop for indicator
+      color,
       nameKey,
       labelKey,
     },
@@ -213,7 +211,7 @@ const ChartTooltipContent = React.forwardRef<
 
             return (
               <div
-                key={item.dataKey || index} // Use index as fallback key
+                key={item.dataKey || index}
                 className={cn(
                   "flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-black",
                   indicator === "dot" && "items-center",
@@ -221,9 +219,9 @@ const ChartTooltipContent = React.forwardRef<
               >
                 {formatter &&
                 typeof item?.value !== "undefined" &&
-                item.name ? ( // Check item.value undefined
+                item.name ?
                   formatter(item.value, item.name, item, index, item.payload)
-                ) : (
+                 : (
                   <>
                     {itemConfig?.icon && !hideIndicator ? (
                       <itemConfig.icon className="size-2.5 text-black" />
@@ -260,7 +258,7 @@ const ChartTooltipContent = React.forwardRef<
                           {itemConfig?.label || item.name}
                         </span>
                       </div>
-                      {typeof item.value !== "undefined" && ( // Check item.value undefined
+                      {typeof item.value !== "undefined" && (
                         <span className="font-mono font-bold tabular-nums text-black">
                           {item.value.toLocaleString()}
                         </span>
@@ -276,7 +274,7 @@ const ChartTooltipContent = React.forwardRef<
     );
   },
 );
-ChartTooltipContent.displayName = "ChartTooltipContent"; // Corrected from "ChartTooltip"
+ChartTooltipContent.displayName = "ChartTooltipContent";
 
 const ChartLegend = RechartsPrimitive.Legend;
 
@@ -303,7 +301,7 @@ const ChartLegendContent = React.forwardRef<
         ref={ref}
         className={cn(
           "flex items-center justify-center gap-4",
-          verticalAlign === "top" ? "pb-3" : "pt-3", // Add more space if needed
+          verticalAlign === "top" ? "pb-3" : "pt-3",
           className,
         )}
       >
@@ -337,15 +335,13 @@ const ChartLegendContent = React.forwardRef<
     );
   },
 );
-ChartLegendContent.displayName = "ChartLegendContent"; // Corrected from "ChartLegend"
+ChartLegendContent.displayName = "ChartLegendContent";
 
-// Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,
   key: string,
 ): ChartConfig[string] | undefined {
-  // Added return type
   if (typeof payload !== "object" || payload === null) {
     return undefined;
   }
@@ -361,13 +357,13 @@ function getPayloadConfigFromPayload(
 
   if (
     key in payload &&
-    typeof (payload as any)[key] === "string" // Type assertion
+    typeof (payload as any)[key] === "string"
   ) {
     configLabelKey = (payload as any)[key] as string;
   } else if (
     payloadPayload &&
     key in payloadPayload &&
-    typeof (payloadPayload as any)[key] === "string" // Type assertion
+    typeof (payloadPayload as any)[key] === "string"
   ) {
     configLabelKey = (payloadPayload as any)[key] as string;
   }

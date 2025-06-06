@@ -8,11 +8,8 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Sheet = SheetPrimitive.Root;
-
 const SheetTrigger = SheetPrimitive.Trigger;
-
 const SheetClose = SheetPrimitive.Close;
-
 const SheetPortal = SheetPrimitive.Portal;
 
 const SheetOverlay = React.forwardRef<
@@ -80,7 +77,7 @@ const SheetHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col space-y-2 text-center sm:text-left border-b-2 border-black pb-4 mb-4",
+      "flex flex-col space-y-2 border-b-2 border-black pb-4 mb-4 text-center sm:text-left",
       className,
     )}
     {...props}
@@ -94,7 +91,7 @@ const SheetFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-4 pt-4 border-t-2 border-black",
+      "mt-4 flex flex-col-reverse gap-2 border-t-2 border-black pt-4 sm:flex-row sm:justify-end sm:space-x-2",
       className,
     )}
     {...props}

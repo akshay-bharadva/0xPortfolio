@@ -33,29 +33,28 @@ const PaginationItem = React.forwardRef<
   HTMLLIElement,
   React.ComponentProps<"li">
 >(({ className, ...props }, ref) => (
-  <li ref={ref} className={cn("", className)} {...props} /> // No specific styling needed for li itself
+  <li ref={ref} className={cn("", className)} {...props} />
 ));
 PaginationItem.displayName = "PaginationItem";
 
 type PaginationLinkProps = {
   isActive?: boolean;
-} & ButtonProps; // Use ButtonProps directly
+} & ButtonProps;
 
 const PaginationLink = ({
   className,
   isActive,
-  size = "icon", // Default size for page numbers
+  size = "icon",
   ...props
 }: PaginationLinkProps) => (
   <Button
     aria-current={isActive ? "page" : undefined}
-    variant={isActive ? "default" : "outline"} // Default variant for active, outline for others
+    variant={isActive ? "default" : "outline"}
     size={size}
     className={cn(
       isActive
         ? "bg-black text-white pointer-events-none shadow-[1px_1px_0px_hsl(var(--primary-foreground))_inset]"
         : "hover:bg-yellow-300 text-black",
-      // Ensure consistent sizing for icon buttons if text is present
       size === "icon" && "p-0",
       className,
     )}
@@ -70,12 +69,12 @@ const PaginationPrevious = ({
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to previous page"
-    size="default" // Make prev/next buttons default size
+    size="default"
     className={cn("gap-1 pl-2.5", className)}
     {...props}
   >
     <ChevronLeft className="size-4" />
-    <span>Previous</span>
+    <span className="hidden sm:inline">Previous</span>
   </PaginationLink>
 );
 PaginationPrevious.displayName = "PaginationPrevious";
@@ -86,11 +85,11 @@ const PaginationNext = ({
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to next page"
-    size="default" // Make prev/next buttons default size
+    size="default"
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
-    <span>Next</span>
+    <span className="hidden sm:inline">Next</span>
     <ChevronRight className="size-4" />
   </PaginationLink>
 );

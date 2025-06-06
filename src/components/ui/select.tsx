@@ -7,9 +7,7 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Select = SelectPrimitive.Root;
-
 const SelectGroup = SelectPrimitive.Group;
-
 const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef<
@@ -86,7 +84,7 @@ const SelectContent = React.forwardRef<
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
-          "p-1", // Padding for items within the viewport
+          "p-1",
           position === "popper" &&
             "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
         )}
@@ -118,7 +116,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-none py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-yellow-300 focus:text-black data-[disabled]:pointer-events-none data-[disabled]:opacity-50 font-semibold hover:bg-gray-100 data-[state=checked]:bg-yellow-400 data-[state=checked]:text-black", // Added checked state
+      "relative flex w-full cursor-default select-none items-center rounded-none py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-yellow-300 focus:text-black data-[disabled]:pointer-events-none data-[disabled]:opacity-50 font-semibold hover:bg-gray-100 data-[state=checked]:bg-yellow-400 data-[state=checked]:text-black",
       className,
     )}
     {...props}

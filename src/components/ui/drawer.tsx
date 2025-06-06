@@ -17,9 +17,7 @@ const Drawer = ({
 Drawer.displayName = "Drawer";
 
 const DrawerTrigger = DrawerPrimitive.Trigger;
-
 const DrawerPortal = DrawerPrimitive.Portal;
-
 const DrawerClose = DrawerPrimitive.Close;
 
 const DrawerOverlay = React.forwardRef<
@@ -61,7 +59,7 @@ const DrawerHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "grid gap-1.5 p-4 text-center sm:text-left border-b-2 border-black",
+      "grid gap-1.5 border-b-2 border-black p-4 text-center sm:text-left",
       className,
     )}
     {...props}
@@ -75,7 +73,7 @@ const DrawerFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "mt-auto flex flex-col gap-2 p-4 border-t-2 border-black",
+      "mt-auto flex flex-col gap-2 border-t-2 border-black p-4",
       className,
     )}
     {...props}

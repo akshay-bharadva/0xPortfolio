@@ -7,14 +7,15 @@ import Footer from "./footer";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { Toaster as ShadcnToaster } from "@/components/ui/toaster";
 
-type LayoutProps = PropsWithChildren; // Renamed Props
+type LayoutProps = PropsWithChildren;
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://akshay-bharadva.github.io"; // Default to actual URL
+  process.env.NEXT_PUBLIC_SITE_URL || "https://akshay-bharadva.github.io";
 const DEFAULT_OG_TITLE = "Akshay Bharadva - Fullstack Developer";
 const DEFAULT_OG_DESCRIPTION =
   "Portfolio and Blog of Akshay Bharadva, showcasing projects and thoughts on web development.";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/default-og-image.png`; // Ensure this image exists in /public
+
 
 export default function Layout({ children }: LayoutProps) {
   return (
@@ -62,8 +63,6 @@ export default function Layout({ children }: LayoutProps) {
         <meta name="twitter:title" content={DEFAULT_OG_TITLE} />
         <meta name="twitter:description" content={DEFAULT_OG_DESCRIPTION} />
         <meta name="twitter:image" content={DEFAULT_OG_IMAGE} />
-        {/* <meta name="twitter:site" content="@yourTwitterHandle" /> Replace with actual handle */}
-        {/* <meta name="twitter:creator" content="@yourTwitterHandle" /> Replace with actual handle */}
 
         {/* Feeds */}
         <link
@@ -80,13 +79,8 @@ export default function Layout({ children }: LayoutProps) {
         />
       </Head>
       <div className="flex min-h-screen flex-col justify-between bg-gray-100 font-space selection:bg-yellow-300 selection:text-black">
-        {" "}
-        {/* Added font-space globally here */}
         <Header />
-        {/* Adjust mt based on header height. Fixed header is ~60px + py. mt-20 for mobile, mt-24 for sm+ */}
         <main className="mt-20 w-full grow sm:mt-24">
-          {" "}
-          {/* Ensure main takes full width */}
           <Container>{children}</Container>
         </main>
         <Container>
@@ -97,5 +91,7 @@ export default function Layout({ children }: LayoutProps) {
         <ShadcnToaster />
       </div>
     </>
+
+
   );
 }

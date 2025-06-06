@@ -69,7 +69,6 @@ const Carousel = React.forwardRef<
     const [canScrollNext, setCanScrollNext] = React.useState(false);
 
     const onSelect = React.useCallback((currentApi: CarouselApi) => {
-      // Renamed api to currentApi
       if (!currentApi) {
         return;
       }
@@ -139,9 +138,9 @@ const Carousel = React.forwardRef<
           ref={ref}
           onKeyDownCapture={handleKeyDown}
           className={cn(
-            "relative border-2 border-black rounded-none shadow-[4px_4px_0px_#000] p-1 bg-white",
+            "relative rounded-none border-2 border-black bg-white p-1 shadow-[4px_4px_0px_#000]",
             className,
-          )} // Added bg-white for content area
+          )}
           role="region"
           aria-roledescription="carousel"
           {...props}
@@ -166,7 +165,7 @@ const CarouselContent = React.forwardRef<
         ref={ref}
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col", // Adjust margin based on item padding
+          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
           className,
         )}
         {...props}
@@ -188,8 +187,8 @@ const CarouselItem = React.forwardRef<
       role="group"
       aria-roledescription="slide"
       className={cn(
-        "min-w-0 shrink-0 grow-0 basis-full", // Removed p-1, padding should be on content inside item if needed
-        orientation === "horizontal" ? "pl-4" : "pt-4", // This provides the gap
+        "min-w-0 shrink-0 grow-0 basis-full",
+        orientation === "horizontal" ? "pl-4" : "pt-4",
         className,
       )}
       {...props}
@@ -202,7 +201,7 @@ const CarouselPrevious = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
 >(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-  const { orientation, scrollPrev, canScrollPrev } = useCarousel();
+  const { scrollPrev, canScrollPrev } = useCarousel();
 
   return (
     <Button
@@ -210,10 +209,7 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-none", // Ensure button styles are Neo-Brutalist
-        orientation === "horizontal"
-          ? "-left-4 top-1/2 -translate-y-1/2 md:-left-12" // Adjust position
-          : "-top-4 left-1/2 -translate-x-1/2 rotate-90 md:-top-12",
+        "absolute -left-4 top-1/2 h-8 w-8 -translate-y-1/2 rounded-none md:-left-12",
         className,
       )}
       disabled={!canScrollPrev}
@@ -231,7 +227,7 @@ const CarouselNext = React.forwardRef<
   HTMLButtonElement,
   React.ComponentProps<typeof Button>
 >(({ className, variant = "outline", size = "icon", ...props }, ref) => {
-  const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const { scrollNext, canScrollNext } = useCarousel();
 
   return (
     <Button
@@ -239,10 +235,7 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-none", // Ensure button styles are Neo-Brutalist
-        orientation === "horizontal"
-          ? "-right-4 top-1/2 -translate-y-1/2 md:-right-12" // Adjust position
-          : "-bottom-4 left-1/2 -translate-x-1/2 rotate-90 md:-bottom-12",
+        "absolute -right-4 top-1/2 h-8 w-8 -translate-y-1/2 rounded-none md:-right-12",
         className,
       )}
       disabled={!canScrollNext}

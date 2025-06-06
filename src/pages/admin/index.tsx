@@ -16,7 +16,7 @@ export default function AdminIndexPage() {
 
       if (sessionError) {
         console.error("Error fetching session on admin index:", sessionError);
-        router.replace("/admin/login"); // Fallback to login on session error
+        router.replace("/admin/login");
         return;
       }
 
@@ -25,13 +25,12 @@ export default function AdminIndexPage() {
         return;
       }
 
-      // Session exists, check MFA status
       const { data: aalData, error: aalError } =
         await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
 
       if (aalError) {
         console.error("Error fetching AAL status on admin index:", aalError);
-        router.replace("/admin/login"); // Fallback to login on AAL error
+        router.replace("/admin/login");
         return;
       }
 
@@ -43,8 +42,6 @@ export default function AdminIndexPage() {
       ) {
         router.replace("/admin/mfa-challenge");
       } else {
-        // User is authenticated (AAL1) but not yet AAL2, and not on the path to AAL2 via challenge.
-        // This implies MFA might not be set up or verified yet.
         const { data: factorsData, error: factorsError } =
           await supabase.auth.mfa.listFactors();
         if (factorsError) {
@@ -52,7 +49,7 @@ export default function AdminIndexPage() {
             "Error listing MFA factors on admin index:",
             factorsError,
           );
-          router.replace("/admin/login"); // Fallback on error
+          router.replace("/admin/login");
           return;
         }
 
@@ -61,11 +58,9 @@ export default function AdminIndexPage() {
         );
 
         if (!verifiedFactor) {
-          // No verified TOTP factor exists
           router.replace("/admin/setup-mfa");
         } else {
-          // Verified factor exists, but not yet passed challenge or AAL state is stuck at AAL1
-          router.replace("/admin/mfa-challenge"); // Attempt challenge again
+          router.replace("/admin/mfa-challenge");
         }
       }
     };
@@ -80,7 +75,6 @@ export default function AdminIndexPage() {
     transition: { duration: 0.2 },
   };
 
-  // This page primarily handles redirection, so a simple loading state is sufficient.
   return (
     <Layout>
       <motion.div

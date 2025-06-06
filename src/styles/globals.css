@@ -1,62 +1,46 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"); /* Added 700 italic if needed */
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Light Theme (Default) - Neo-Brutalist Palette */
-    --background: 220 13% 96%; /* Light Grayish Blue */
-    --foreground: 240 10% 3.9%; /* Almost Black */
-
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 240 10% 3.9%; /* Almost Black */
-
-    --popover: 0 0% 100%; /* White */
-    --popover-foreground: 240 10% 3.9%; /* Almost Black */
-
-    --primary: 240 10% 3.9%; /* Almost Black (for primary actions, text) */
-    --primary-foreground: 0 0% 100%; /* White (for text on primary bg) */
-
-    --secondary: 50 100% 60%; /* Bright Yellow (Neo-Brutalist accent) */
-    --secondary-foreground: 240 10% 3.9%; /* Almost Black (text on yellow) */
-
-    --muted: 220 9% 86%; /* Lighter Gray */
-    --muted-foreground: 240 5% 45.1%; /* Dark Gray */
-
-    --accent: 250 70% 60%; /* Vibrant Indigo/Purple (Neo-Brutalist accent) */
-    --accent-foreground: 0 0% 100%; /* White (text on accent) */
-
-    --destructive: 0 84.2% 60.2%; /* Bright Red */
-    --destructive-foreground: 0 0% 100%; /* White */
-
-    --border: 240 10% 3.9%; /* Almost Black (for all borders) */
-    --input: 240 10% 3.9%; /* Almost Black (for input borders) */
-    --ring: 250 70% 60%; /* Vibrant Indigo/Purple (for focus rings) */
-
-    --radius: 0rem; /* No border radius for brutalism */
-
-    /* Chart Colors (Keep vibrant and contrasting) */
-    --chart-1: 12 76% 61%; /* Orange */
-    --chart-2: 173 58% 39%; /* Teal */
-    --chart-3: 197 37% 24%; /* Dark Blue */
-    --chart-4: 43 74% 66%; /* Yellow-Orange */
-    --chart-5: 27 87% 67%; /* Salmon */
-
-    /* Sidebar specific colors (can be same as main or distinct) */
-    --sidebar-background: 0 0% 100%; /* White */
+    --background: 220 13% 96%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 10% 3.9%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 50 100% 60%;
+    --secondary-foreground: 240 10% 3.9%;
+    --muted: 220 9% 86%;
+    --muted-foreground: 240 5% 45.1%;
+    --accent: 250 70% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 10% 3.9%;
+    --input: 240 10% 3.9%;
+    --ring: 250 70% 60%;
+    --radius: 0rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 240 10% 3.9%;
     --sidebar-primary: 240 10% 3.9%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 50 100% 60%; /* Yellow accent for sidebar */
+    --sidebar-accent: 50 100% 60%;
     --sidebar-accent-foreground: 240 10% 3.9%;
     --sidebar-border: 240 10% 3.9%;
     --sidebar-ring: 250 70% 60%;
   }
 
   .dark {
-    /* Dark Theme (Optional - Define if supporting dark mode) */
-    /* Example dark theme, adjust for Neo-Brutalism if needed */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -65,25 +49,23 @@
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 240 10% 3.9%;
-    --secondary: 50 100% 50%; /* Slightly darker yellow for dark mode */
+    --secondary: 50 100% 50%;
     --secondary-foreground: 240 10% 3.9%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 250 70% 70%; /* Lighter Indigo for dark mode */
+    --accent: 250 70% 70%;
     --accent-foreground: 240 10% 3.9%;
     --destructive: 0 72.2% 50.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 90%; /* Light border for dark mode */
+    --border: 0 0% 90%;
     --input: 0 0% 90%;
     --ring: 250 70% 70%;
-
     --chart-1: 12 76% 71%;
     --chart-2: 173 58% 49%;
     --chart-3: 197 37% 34%;
     --chart-4: 43 74% 76%;
     --chart-5: 27 87% 77%;
-
-    --sidebar-background: 240 10% 5.9%; /* Darker sidebar */
+    --sidebar-background: 240 10% 5.9%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 0 0% 98%;
     --sidebar-primary-foreground: 240 10% 3.9%;
@@ -95,128 +77,35 @@
 }
 
 @layer base {
-  * {
-    @apply border-border; /* Default border color from CSS vars */
-    box-sizing: border-box; /* Consistent box model */
-  }
-  html {
-    @apply scroll-smooth; /* Smooth scrolling for anchor links */
-  }
-  body {
-    @apply bg-background text-foreground font-space antialiased; /* Apply Space Mono and antialiasing */
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  /* Basic heading styles, can be overridden by components */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-bold text-black; /* Brutalist headings are typically black and bold */
-  }
-
-  /* Custom prose styles for Neo-Brutalism markdown */
-  .prose-nb {
-    /* NB for Neo-Brutalist */
-    @apply prose max-w-none; /* Reset default prose styles */
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      @apply font-space text-black;
-    }
-    h1 {
-      @apply text-3xl md:text-4xl font-black my-6 border-b-2 border-black pb-2;
-    }
-    h2 {
-      @apply text-2xl md:text-3xl font-bold my-5 border-b-2 border-black pb-1;
-    }
-    h3 {
-      @apply text-xl md:text-2xl font-bold my-4;
-    }
-    h4 {
-      @apply text-lg md:text-xl font-bold my-3;
-    }
-
-    p {
-      @apply font-space text-base text-gray-800 leading-relaxed my-4;
-    }
-
-    a {
-      @apply font-space text-indigo-700 font-bold underline hover:bg-yellow-200 transition-colors;
-    }
-
-    strong {
-      @apply font-space font-bold text-black;
-    }
-    em {
-      @apply font-space italic;
-    }
-
-    blockquote {
-      @apply font-space border-l-4 border-black bg-gray-100 pl-4 pr-4 py-3 my-6 italic text-black rounded-none;
-    }
-
-    ul,
-    ol {
-      @apply font-space my-4 pl-5 text-gray-800;
-    }
-    ul {
-      @apply list-disc;
-    }
-    ol {
-      @apply list-decimal;
-    }
-    li {
-      @apply my-1 leading-relaxed;
-    }
-    li::marker {
-      @apply text-black font-bold;
-    }
-
-    code {
-      @apply font-mono text-sm bg-yellow-200 text-black px-1 py-0.5 border border-black rounded-none;
-    }
-    pre {
-      @apply font-mono text-sm my-4 border-2 border-black rounded-none shadow-[4px_4px_0_#000] bg-gray-800 text-gray-100 overflow-x-auto;
-    }
-    pre code {
-      @apply bg-transparent text-inherit border-none p-0 shadow-none;
-    } /* Reset inline code style inside pre */
-
-    img {
-      @apply my-6 rounded-none border-2 border-black shadow-[4px_4px_0_#000] w-full h-auto object-contain max-h-[70vh];
-    }
-
-    table {
-      @apply my-6 w-full border-collapse border-2 border-black shadow-[4px_4px_0_#000] bg-white;
-    }
-    thead {
-      @apply bg-black text-white;
-    }
-    th,
-    td {
-      @apply border border-gray-400 px-3 py-2 text-left;
-    }
-    th {
-      @apply font-bold;
-    }
-
-    hr {
-      @apply my-8 border-t-2 border-black;
-    }
-  }
+  * { @apply border-border; box-sizing: border-box; }
+  html { @apply scroll-smooth; }
+  body { @apply bg-background text-foreground font-space antialiased; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  h1, h2, h3, h4, h5, h6 { @apply font-bold text-black; }
+  .prose-nb { @apply prose max-w-none; }
+  .prose-nb h1, .prose-nb h2, .prose-nb h3, .prose-nb h4, .prose-nb h5, .prose-nb h6 { @apply font-space text-black; }
+  .prose-nb h1 { @apply text-3xl md:text-4xl font-black my-6 border-b-2 border-black pb-2; }
+  .prose-nb h2 { @apply text-2xl md:text-3xl font-bold my-5 border-b-2 border-black pb-1; }
+  .prose-nb h3 { @apply text-xl md:text-2xl font-bold my-4; }
+  .prose-nb h4 { @apply text-lg md:text-xl font-bold my-3; }
+  .prose-nb p { @apply font-space text-base text-gray-800 leading-relaxed my-4; }
+  .prose-nb a { @apply font-space text-indigo-700 font-bold underline hover:bg-yellow-200 transition-colors; }
+  .prose-nb strong { @apply font-space font-bold text-black; }
+  .prose-nb em { @apply font-space italic; }
+  .prose-nb blockquote { @apply font-space border-l-4 border-black bg-gray-100 pl-4 pr-4 py-3 my-6 italic text-black rounded-none; }
+  .prose-nb ul, .prose-nb ol { @apply font-space my-4 pl-5 text-gray-800; }
+  .prose-nb ul { @apply list-disc; }
+  .prose-nb ol { @apply list-decimal; }
+  .prose-nb li { @apply my-1 leading-relaxed; }
+  .prose-nb li::marker { @apply text-black font-bold; }
+  .prose-nb code { @apply font-mono text-sm bg-yellow-200 text-black px-1 py-0.5 border border-black rounded-none; }
+  .prose-nb pre { @apply font-mono text-sm my-4 border-2 border-black rounded-none shadow-[4px_4px_0_#000] bg-gray-800 text-gray-100 overflow-x-auto; }
+  .prose-nb pre code { @apply bg-transparent text-inherit border-none p-0 shadow-none; }
+  .prose-nb img { @apply my-6 rounded-none border-2 border-black shadow-[4px_4px_0_#000] w-full h-auto object-contain max-h-[70vh]; }
+  .prose-nb table { @apply my-6 w-full border-collapse border-2 border-black shadow-[4px_4px_0_#000] bg-white; }
+  .prose-nb thead { @apply bg-black text-white; }
+  .prose-nb th, .prose-nb td { @apply border border-gray-400 px-3 py-2 text-left; }
+  .prose-nb th { @apply font-bold; }
+  .prose-nb hr { @apply my-8 border-t-2 border-black; }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  /* Add any custom utility classes here if needed */
-}
+@layer utilities { .text-balance { text-wrap: balance; } }

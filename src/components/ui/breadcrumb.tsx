@@ -19,7 +19,7 @@ const BreadcrumbList = React.forwardRef<
   <ol
     ref={ref}
     className={cn(
-      "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5", // text-muted-foreground is usually gray
+      "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5",
       className,
     )}
     {...props}
@@ -51,9 +51,9 @@ const BreadcrumbLink = React.forwardRef<
     <Comp
       ref={ref}
       className={cn(
-        "transition-colors hover:text-foreground font-semibold hover:underline text-indigo-700 hover:text-indigo-900",
+        "font-semibold text-indigo-700 transition-colors hover:text-indigo-900 hover:underline",
         className,
-      )} // Made link color more vibrant
+      )}
       {...props}
     />
   );
@@ -108,7 +108,7 @@ const BreadcrumbEllipsis = ({
     <span className="sr-only">More</span>
   </span>
 );
-BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis"; // Corrected typo
+BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis";
 
 export {
   Breadcrumb,
