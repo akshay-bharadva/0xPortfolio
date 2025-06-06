@@ -590,7 +590,8 @@ const sidebarMenuButtonVariants = cva(
 const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement, // Can be anchor if asChild is true and child is anchor
   React.ButtonHTMLAttributes<HTMLButtonElement> & // Use ButtonHTMLAttributes
-    React.AnchorHTMLAttributes<HTMLAnchorElement> & { // Also Anchor for asChild case
+    React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+      // Also Anchor for asChild case
       asChild?: boolean;
       isActive?: boolean;
       tooltip?: string | React.ComponentProps<typeof TooltipContent>;

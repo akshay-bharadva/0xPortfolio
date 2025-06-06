@@ -17,7 +17,6 @@ export default function Me({ children }: MeProps) {
             priority // Important for LCP if this is above the fold
           />
           <h2 className="text-4xl sm:text-5xl text-black font-tahu mb-0 -rotate-6 line-clamp-5 text-center sm:text-left font-medium">
-
             Akshay
             <br />
             Bharadva

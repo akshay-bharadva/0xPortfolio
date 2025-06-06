@@ -4,7 +4,7 @@ import { BsArrowUpRight } from "react-icons/bs";
 import ProjectCard from "./project-card";
 import { Button } from "@/components/ui/button";
 import type { GitHubRepo } from "@/types"; // Import specific type
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 type ProjectsProps = PropsWithChildren; // Renamed Props
 
@@ -15,7 +15,7 @@ export default function Projects({ children }: ProjectsProps) {
   const [projects, setProjects] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     setLoading(true);
@@ -54,7 +54,7 @@ export default function Projects({ children }: ProjectsProps) {
             (a, b) =>
               (b.stargazers_count || 0) - (a.stargazers_count || 0) ||
               new Date(b.updated_at).getTime() -
-              new Date(a.updated_at).getTime(),
+                new Date(a.updated_at).getTime(),
           );
         setProjects(filteredProjects.slice(0, 9)); // Ensure only 9 are shown even if API returns more due to filtering changes
       })
@@ -111,7 +111,16 @@ export default function Projects({ children }: ProjectsProps) {
             ))}
           </div>
           <div className="text-center">
-            <Button variant="outline" size="lg" onClick={() => router.push(`https://github.com/${GITHUB_USERNAME}?tab=repositories`)} className="text-md">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() =>
+                router.push(
+                  `https://github.com/${GITHUB_USERNAME}?tab=repositories`,
+                )
+              }
+              className="text-md"
+            >
               More on GitHub <BsArrowUpRight className="ml-1.5 inline" />
             </Button>
           </div>

@@ -165,7 +165,7 @@ export default function Experience({ children }: ExperienceProps) {
             key={`${experience.orgName}-${experience.position}-${experience.from}`} // More unique key
             className="group relative mb-10 rounded-none border-2 border-black bg-white p-6 pl-10 shadow-[6px_6px_0px_#000] transition-shadow duration-150 last-of-type:mb-0 hover:shadow-[8px_8px_0px_#4f46e5]"
           >
-            <span className="absolute -left-[11px] top-7 z-10 size-5 rotate-45 rounded-none border-2 border-black bg-yellow-400 shadow-[1px_1px_0_#000] transition-colors group-hover:bg-indigo-500" />{" "}
+            <span className="absolute -left-[11px] top-7 z-10 h-5 w-5 rotate-45 rounded-none border-2 border-black bg-yellow-400 shadow-[1px_1px_0_#000] transition-colors group-hover:bg-indigo-500" />{" "}
             {/* Added shadow to marker, z-10 */}
             <Link
               href={experience.orgHref}
@@ -178,7 +178,7 @@ export default function Experience({ children }: ExperienceProps) {
               </p>
               <h3 className="flex items-center text-2xl font-bold text-black transition-colors group-hover:text-indigo-700">
                 {experience.orgName}{" "}
-                <BsArrowUpRight className="ml-1.5 inline-block size-5 transition-transform group-hover:translate-x-0.5 group-hover:rotate-[15deg]" />{" "}
+                <BsArrowUpRight className="ml-1.5 inline-block h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:rotate-[15deg]" />{" "}
                 {/* Subtle rotate effect */}
               </h3>
             </Link>
