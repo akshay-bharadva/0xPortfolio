@@ -5,8 +5,7 @@
 // For now, keeping it as is, assuming it might be used or was planned.
 
 import * as React from "react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ThemeProviderProps } from "next-themes/dist/types";
+import { ThemeProvider as NextThemesProvider, ThemeProviderProps } from "next-themes";
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   // Enforce 'light' theme if Neo-Brutalism is strictly light-mode focused
