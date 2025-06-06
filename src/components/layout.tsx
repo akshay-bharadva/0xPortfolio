@@ -4,26 +4,50 @@ import Container from "./container";
 import Header from "./header";
 import BottomMenu from "./bottom-menu";
 import Footer from "./footer";
-import { Toaster as SonnerToaster } from "@/components/ui/sonner"; // For admin panel notifications
-import { Toaster as ShadcnToaster } from "@/components/ui/toaster"; // For Shadcn default toast (if used elsewhere)
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { Toaster as ShadcnToaster } from "@/components/ui/toaster";
 
+type LayoutProps = PropsWithChildren; // Renamed Props
 
-type Props = PropsWithChildren;
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://akshay-bharadva.github.io"; // Default to actual URL
 const DEFAULT_OG_TITLE = "Akshay Bharadva - Fullstack Developer";
-const DEFAULT_OG_DESCRIPTION = "Portfolio and Blog of Akshay Bharadva, showcasing projects and thoughts on web development.";
-const DEFAULT_OG_IMAGE = `${SITE_URL}/default-og-image.png`;
+const DEFAULT_OG_DESCRIPTION =
+  "Portfolio and Blog of Akshay Bharadva, showcasing projects and thoughts on web development.";
+const DEFAULT_OG_IMAGE = `${SITE_URL}/default-og-image.png`; // Ensure this image exists in /public
 
-export default function Layout({ children }: Props) {
+export default function Layout({ children }: LayoutProps) {
   return (
     <>
       <Head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Akshay Bharadva</title>
-        <meta name="description" content="Akshay Bharadva - Fullstack Developer Portfolio & Blog" />
-        <meta name="description" content="Akshay Bharadva - Fullstack Developer Portfolio & Blog" />
+        <meta
+          name="description"
+          content="Akshay Bharadva - Fullstack Developer Portfolio & Blog"
+        />
         <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
 
+        {/* Open Graph / Facebook */}
         <meta property="og:title" content={DEFAULT_OG_TITLE} />
         <meta property="og:description" content={DEFAULT_OG_DESCRIPTION} />
         <meta property="og:type" content="website" />
@@ -32,33 +56,45 @@ export default function Layout({ children }: Props) {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:site_name" content="Akshay Bharadva" />
+
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={DEFAULT_OG_TITLE} />
         <meta name="twitter:description" content={DEFAULT_OG_DESCRIPTION} />
         <meta name="twitter:image" content={DEFAULT_OG_IMAGE} />
-        {/* <meta name="twitter:site" content="@yourTwitterHandle" /> */}
-        {/* <meta name="twitter:creator" content="@yourTwitterHandle" /> */}
+        {/* <meta name="twitter:site" content="@yourTwitterHandle" /> Replace with actual handle */}
+        {/* <meta name="twitter:creator" content="@yourTwitterHandle" /> Replace with actual handle */}
 
-        <link rel="alternate" type="application/rss+xml" title="Akshay Bharadva Blog RSS Feed" href="/feed.xml" />
-        <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+        {/* Feeds */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Akshay Bharadva Blog RSS Feed"
+          href="/feed.xml"
+        />
+        <link
+          rel="sitemap"
+          type="application/xml"
+          title="Sitemap"
+          href="/sitemap.xml"
+        />
       </Head>
-      {/* bg-body might conflict with explicit bg-gray-100 etc. on pages. Standardize to bg-background or a specific color.
-          For Neo-Brutalism, often a light, slightly off-white or vibrant color is used for body background.
-          Let's use bg-gray-100 as a base for now as seen in blog pages.
-      */}
-      <div className="flex flex-col justify-between min-h-screen selection:bg-yellow-300 selection:text-black bg-gray-100">
-        <Header /> {/* Header is fixed, so Container might not be needed around it here */}
-        <main className="mt-24 sm:mt-32 flex-grow"> {/* Adjusted margin-top for fixed header, flex-grow to push footer down */}
-          <Container>
-            {children}
-          </Container>
+      <div className="flex min-h-screen flex-col justify-between bg-gray-100 font-space selection:bg-yellow-300 selection:text-black">
+        {" "}
+        {/* Added font-space globally here */}
+        <Header />
+        {/* Adjust mt based on header height. Fixed header is ~60px + py. mt-20 for mobile, mt-24 for sm+ */}
+        <main className="mt-20 w-full grow sm:mt-24">
+          {" "}
+          {/* Ensure main takes full width */}
+          <Container>{children}</Container>
         </main>
         <Container>
           <Footer />
         </Container>
         <BottomMenu />
-        <SonnerToaster /> {/* For Supabase admin actions */}
-        <ShadcnToaster /> {/* If using useToast hook from Shadcn */}
+        <SonnerToaster />
+        <ShadcnToaster />
       </div>
     </>
   );

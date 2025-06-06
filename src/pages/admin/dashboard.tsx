@@ -1,95 +1,131 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { supabase, Session } from '@/supabase/client';
-import AdminDashboardComponent from '@/components/admin/admin-dashboard';
-import { motion } from 'framer-motion';
-import Layout from '@/components/layout'; // Import Layout
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { supabase, Session } from "@/supabase/client"; // Session type from Supabase
+import AdminDashboardComponent from "@/components/admin/admin-dashboard";
+import { motion } from "framer-motion";
+import Layout from "@/components/layout";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState<Session | null>(null); // Use Supabase Session type
 
   useEffect(() => {
     const checkAuthAndAAL = async () => {
-      setIsLoading(true);
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      setIsLoading(true); // Start loading indicator
+      const {
+        data: { session: currentSession },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        console.error("Error fetching session:", sessionError);
+        router.replace("/admin/login");
+        return;
+      }
+
       setSession(currentSession);
 
       if (!currentSession) {
-        router.replace('/admin/login');
+        router.replace("/admin/login");
         return;
       }
 
-      const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      const { data: aalData, error: aalError } =
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       if (aalError) {
         console.error("Error fetching AAL status:", aalError);
-        // Allow access if session exists but AAL fails, but log it. AAL2 check is primary.
-        // Consider if this should redirect to login. For now, if session is good, proceed.
+        // Critical error fetching AAL, might indicate issues. Redirect to login for safety.
+        router.replace("/admin/login");
+        return;
       }
 
-      if (aalData?.currentLevel !== 'aal2') {
-        if (aalData?.nextLevel === 'aal2' && aalData?.currentLevel === 'aal1') {
-          router.replace('/admin/mfa-challenge');
+      if (aalData?.currentLevel !== "aal2") {
+        if (aalData?.currentLevel === "aal1" && aalData?.nextLevel === "aal2") {
+          router.replace("/admin/mfa-challenge");
         } else {
           // This could mean MFA is not setup, or some other state.
           // Login page will handle redirection to setup-mfa if needed.
-          router.replace('/admin/login');
+          router.replace("/admin/login");
         }
-        return;
+        return; // Stop execution after redirect
       }
-      setIsLoading(false);
+      setIsLoading(false); // Successfully authenticated and AAL2 verified
     };
 
     checkAuthAndAAL();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-        setSession(session);
-        if (event === 'SIGNED_OUT' || !session) {
-            router.replace('/admin/login');
-        } else if (event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED' || event === "MFA_CHALLENGE_VERIFIED") {
-            checkAuthAndAAL(); // Re-check AAL
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, newSession) => {
+        setSession(newSession); // Update session state on any auth change
+        if (event === "SIGNED_OUT" || !newSession) {
+          router.replace("/admin/login");
+        } else if (
+          event === "USER_UPDATED" ||
+          event === "TOKEN_REFRESHED" ||
+          event === "MFA_CHALLENGE_VERIFIED"
+        ) {
+          // Re-check AAL on these events as auth state might have changed significantly
+          checkAuthAndAAL();
         }
-    });
+      },
+    );
 
-    return () => { authListener?.subscription?.unsubscribe(); };
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
   }, [router]);
 
   const handleLogout = async () => {
     setIsLoading(true);
-    await supabase.auth.signOut();
-    // onAuthStateChange listener handles redirection
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Error signing out:", error);
+      setIsLoading(false); // Allow UI to respond if sign out fails
+    }
+    // onAuthStateChange listener handles redirection to login
   };
 
   const pageVariants = {
     initial: { opacity: 0, y: 10 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -10 },
+    transition: { duration: 0.2 },
   };
 
   if (isLoading || !session) {
+    // Show loader if loading or session is null (e.g., during initial check)
     return (
-      <Layout> {/* Added Layout */}
+      <Layout>
         <motion.div
-          key="dashboard-loading" initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={{ duration: 0.2 }}
-          className="min-h-screen flex items-center justify-center bg-indigo-100 font-space" // Added font-space
+          key="dashboard-loading"
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={pageVariants}
+          className="flex min-h-screen items-center justify-center bg-indigo-100 font-space"
         >
-          <div className="text-center p-8 bg-white border-2 border-black">
-            <div className="animate-spin rounded-none h-12 w-12 border-t-4 border-b-4 border-indigo-600 mx-auto mb-4"></div>
-            <p className="text-gray-700 font-semibold">Loading Dashboard...</p>
+          <div className="rounded-none border-2 border-black bg-white p-8 text-center">
+            <div className="mx-auto mb-4 size-12 animate-spin rounded-none border-y-4 border-indigo-600"></div>
+            <p className="font-semibold text-gray-700">Loading Dashboard...</p>
           </div>
         </motion.div>
       </Layout>
     );
   }
 
+  // If session exists and not loading (implies AAL2 was met)
   return (
-    <Layout> {/* Added Layout */}
+    <Layout>
       <motion.div
-          key="dashboard-content" initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={{ duration: 0.2 }}
-          className="font-space" // Added font-space to content wrapper
+        key="dashboard-content"
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
+        className="font-space" // Ensure font is applied to the dashboard content area
       >
-          <AdminDashboardComponent onLogout={handleLogout} />
+        <AdminDashboardComponent onLogout={handleLogout} />
       </motion.div>
     </Layout>
   );

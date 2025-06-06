@@ -1,55 +1,81 @@
 import Link from "next/link";
-import { PropsWithChildren, useState, useEffect } from "react"; // Added useEffect
+import { PropsWithChildren, useState, useEffect } from "react";
 import { AiOutlineCopyrightCircle } from "react-icons/ai";
-import { BsArrowUpRight } from "react-icons/bs";
+import { BsArrowUpRight, BsGithub, BsLinkedin } from "react-icons/bs"; // Added LinkedIn
 
-type Props = PropsWithChildren;
+type FooterProps = PropsWithChildren; // Renamed Props to FooterProps
 
-export default function Footer({ children }: Props) {
-  const [time, setTime] = useState(new Date());
+export default function Footer({ children }: FooterProps) {
+  const [currentTime, setCurrentTime] = useState(""); // Store formatted time
 
-  useEffect(() => { // Corrected setInterval usage with useEffect for cleanup
-    const timerId = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-    return () => clearInterval(timerId); // Cleanup interval on component unmount
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      setCurrentTime(
+        `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`,
+        // Removed seconds for less frequent visual updates: :${now.getSeconds().toString().padStart(2, '0')}
+      );
+    };
+    updateClock(); // Initial call
+    const timerId = setInterval(updateClock, 1000 * 60); // Update every minute
+    return () => clearInterval(timerId);
   }, []);
 
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="mb-20 md:mb-0 md:my-8 flex flex-col justify-center gap-4 font-space items-center border-t-2 border-black pt-10 text-sm text-black"> {/* border-t-slate-400 to border-t-2 border-black, text-black */}
-      <p className="flex flex-col justify-center items-center gap-2 md:block">
+    <footer className="mb-20 flex flex-col items-center justify-center gap-4 border-t-2 border-black pt-10 font-space text-sm text-black md:my-8 md:mb-0">
+      <div className="mb-4 flex gap-4">
+        <Link
+          href="https://github.com/akshay-bharadva"
+          rel="noopener noreferrer"
+          target="_blank"
+          aria-label="GitHub Profile"
+          className="border-2 border-transparent p-2 text-2xl text-black transition-colors hover:border-black hover:bg-yellow-200 hover:text-indigo-700"
+        >
+          <BsGithub />
+        </Link>
+        <Link
+          href="https://www.linkedin.com/in/akshay-bharadva/"
+          rel="noopener noreferrer"
+          target="_blank"
+          aria-label="LinkedIn Profile"
+          className="border-2 border-transparent p-2 text-2xl text-black transition-colors hover:border-black hover:bg-yellow-200 hover:text-indigo-700"
+        >
+          <BsLinkedin />
+        </Link>
+      </div>
+
+      <p className="flex flex-col items-center justify-center gap-2 md:flex-row">
         <span className="font-semibold">
           Built with{" "}
           <Link
             href="https://nextjs.org/"
-            rel="noreferrer"
+            rel="noopener noreferrer" // Corrected rel
             target="_blank"
-            className="text-indigo-700 hover:text-indigo-900 font-bold underline hover:bg-yellow-200 transition" // Adjusted link style
+            className="font-bold text-indigo-700 underline transition-colors hover:bg-yellow-200 hover:text-indigo-900"
           >
             Next.js <BsArrowUpRight className="inline" />
           </Link>
         </span>
-        <span className="hidden md:inline mx-1 font-bold">|</span>
+        <span className="mx-1 hidden font-bold md:inline">|</span>
         <span className="font-semibold">
           View Source on{" "}
           <a
             href="https://github.com/akshay-bharadva/akshay-bharadva.github.io"
-            rel="noreferrer"
+            rel="noopener noreferrer" // Corrected rel
             target="_blank"
-            className="text-indigo-700 hover:text-indigo-900 font-bold underline hover:bg-yellow-200 transition" // Adjusted link style
+            className="font-bold text-indigo-700 underline transition-colors hover:bg-yellow-200 hover:text-indigo-900"
           >
-            <span>
-              GitHub <BsArrowUpRight className="inline" />
-            </span>
+            GitHub <BsArrowUpRight className="inline" />
           </a>
         </span>
       </p>
       <p className="font-bold">
-        <AiOutlineCopyrightCircle className="inline-block" />
-        &nbsp;
-        {new Date().getFullYear()} Akshay Bharadva | {time.getHours().toString().padStart(2, '0')}:
-        {time.getMinutes().toString().padStart(2, '0')}
-        {/* Removed seconds for less frequent updates visually, if desired add : {time.getSeconds().toString().padStart(2, '0')} */}
+        <AiOutlineCopyrightCircle className="mr-1 inline-block" />
+        {currentYear} Akshay Bharadva
+        {currentTime && <span className="mx-1">|</span>}
+        {currentTime}
       </p>
     </footer>
   );

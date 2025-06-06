@@ -1,42 +1,56 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import BlogManager from "./blog-manager"
-import ContentManager from "./content-manager"
-import SecuritySettings from "./security-settings" // This will be the Supabase version if you integrate fully
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import BlogManager from "./blog-manager";
+import ContentManager from "./content-manager";
+import SecuritySettings from "./security-settings";
+import { supabase } from "@/supabase/client"; // Import Supabase for AAL check
 
 interface AdminDashboardProps {
-  onLogout: () => void
+  onLogout: () => void;
 }
 
-export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<"blogs" | "content" | "security">("blogs")
+type ActiveTab = "blogs" | "content" | "security";
 
-  // This handleLogout is specific to this component if it doesn't use Supabase auth directly
-  // If Supabase auth is handled at a higher level (like in pages/admin/dashboard.tsx), this might call that
-  const handleLogout = () => {
-    // localStorage.removeItem("admin_auth") // Remove if using Supabase auth fully
-    onLogout()
-  }
+export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
+  const [activeTab, setActiveTab] = useState<ActiveTab>("blogs");
+  const [isMfaEnabled, setIsMfaEnabled] = useState(false); // Dynamic MFA status
+
+  useEffect(() => {
+    const checkMfaStatus = async () => {
+      const { data: aalData } =
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aalData?.currentLevel === "aal2") {
+        setIsMfaEnabled(true);
+      } else {
+        setIsMfaEnabled(false);
+      }
+    };
+    checkMfaStatus();
+  }, []);
 
   const tabs = [
     { id: "blogs", label: "Blog Posts", icon: "📝" },
     { id: "content", label: "Website Content", icon: "🏠" },
-    { id: "security", label: "Security", icon: "🔒" }, // This tab will render your Supabase MFA settings
-  ]
+    { id: "security", label: "Security", icon: "🔒" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-100 font-space"> {/* Added font-space */}
-      <header className="bg-white border-b-2 border-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+    <div className="min-h-screen bg-gray-100 font-space">
+      <header className="border-b-2 border-black bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between py-4">
             <h1 className="text-3xl font-bold text-black">Admin Dashboard</h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-black font-semibold py-1 px-2 border-2 border-green-500 bg-green-100">🔒 MFA Enabled</span>
+              {isMfaEnabled && (
+                <span className="rounded-none border-2 border-green-500 bg-green-100 px-2 py-1 text-sm font-semibold text-black shadow-[1px_1px_0px_#000]">
+                  🔒 MFA Enabled
+                </span>
+              )}
               <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-none font-bold border-2 border-black shadow-[2px_2px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-150 font-space" // Added font-space
+                onClick={onLogout} // onLogout is already correctly passed to handle Supabase signOut
+                className="rounded-none border-2 border-black bg-red-500 px-4 py-2 font-space font-bold text-white shadow-[2px_2px_0px_#000] transition-all duration-150 hover:translate-x-px hover:translate-y-px hover:bg-red-600 hover:shadow-[1px_1px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
               >
                 Logout
               </button>
@@ -45,18 +59,19 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
           <nav className="flex space-x-1 border-b-2 border-black pb-px">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as "blogs" | "content" | "security")}
-                className={`flex items-center space-x-2 py-2 px-4 font-bold text-sm border-2 border-b-0 rounded-t-none font-space
-                  ${activeTab === tab.id
-                    ? "bg-black text-white border-black"
-                    : "bg-white text-black border-black hover:bg-gray-200"
-                  } transition-colors`} // Added font-space
+                onClick={() => setActiveTab(tab.id as ActiveTab)}
+                className={`flex items-center space-x-2 rounded-t-none border-2 border-b-0 px-4 py-2 font-space text-sm font-bold
+                  ${
+                    activeTab === tab.id
+                      ? "border-black bg-black text-white"
+                      : "border-black bg-white text-black hover:bg-gray-200"
+                  } transition-colors`}
               >
                 <span>{tab.icon}</span>
                 <span>{tab.label}</span>
@@ -70,7 +85,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
-          className="bg-white p-6 border-2 border-black shadow-[6px_6px_0px_rgba(0,0,0,0.1)]"
+          className="border-2 border-black bg-white p-6 shadow-[6px_6px_0px_rgba(0,0,0,0.1)]"
         >
           {activeTab === "blogs" && <BlogManager />}
           {activeTab === "content" && <ContentManager />}
@@ -78,5 +93,5 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

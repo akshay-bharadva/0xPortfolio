@@ -1,12 +1,12 @@
-import Container from "@/components/container";
+// import Container from "@/components/container"; // Container is part of Layout
 import Layout from "@/components/layout";
-import NotFound from "@/components/not-found"; // Assuming NotFound is styled
+import NotFoundComponent from "@/components/not-found"; // Renamed NotFound to NotFoundComponent
 
-export default function Custom404() { // Renamed component for clarity
+export default function Custom404Page() {
+  // Renamed component for clarity and consistency
   return (
     <Layout>
-      {/* Container is already applied within Layout's main section */}
-      <NotFound />
+      <NotFoundComponent />
     </Layout>
   );
 }

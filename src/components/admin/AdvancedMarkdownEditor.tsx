@@ -14,15 +14,16 @@ export default function AdvancedMarkdownEditor({
   onImageUploadRequest,
   minHeight = "300px",
 }: AdvancedMarkdownEditorProps) {
-
   return (
-    <div className="border-2 border-black rounded-none font-space"> {/* Added font-space */}
-      <div className="p-2 bg-gray-100 border-b-2 border-black flex justify-between items-center">
-        <span className="text-xs text-black font-semibold">Markdown Editor</span>
+    <div className="rounded-none border-2 border-black font-space">
+      <div className="flex items-center justify-between border-b-2 border-black bg-gray-100 p-2">
+        <span className="text-xs font-semibold text-black">
+          Markdown Editor
+        </span>
         <button
           type="button"
           onClick={onImageUploadRequest}
-          className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-none border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all font-space" // Added font-space
+          className="rounded-none border-2 border-black bg-blue-500 px-3 py-1 font-space text-xs text-white shadow-[2px_2px_0px_#000] transition-all hover:bg-blue-600 active:translate-x-px active:translate-y-px active:shadow-none"
         >
           Upload Image to Content
         </button>

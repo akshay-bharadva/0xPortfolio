@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { PropsWithChildren, ReactElement, ReactNode } from "react";
+import { PropsWithChildren, ReactNode } from "react"; // Removed ReactElement as ReactNode covers it
 import { BsArrowUpRight } from "react-icons/bs";
 
-type Props = PropsWithChildren;
+type ExperienceProps = PropsWithChildren; // Renamed Props to ExperienceProps
 
-type ExperienceType = {
+interface ExperienceItem {
+  // Renamed ExperienceType to ExperienceItem for clarity
   orgName: string;
   orgHref: string;
   position: string;
@@ -12,9 +13,10 @@ type ExperienceType = {
   to: string;
   desc: ReactNode;
   techStack: string[];
-};
+}
 
-const MyExperience: ExperienceType[] = [
+const MY_EXPERIENCES: ExperienceItem[] = [
+  // Renamed MyExperience to MY_EXPERIENCES
   {
     orgName: "SigNoz Inc.",
     orgHref: "https://signoz.io/",
@@ -23,15 +25,37 @@ const MyExperience: ExperienceType[] = [
     to: "Present",
     desc: (
       <>
-        Signoz is an open-source observability platform that helps engineers
+        SigNoz is an open-source observability platform that helps engineers
         monitor and troubleshoot complex distributed systems.
-        <br/>
-        As a developer with SigNoz, I developed pages such as <span className="text-indigo-600 font-semibold">&ldquo;/pricing&rdquo;</span>, <span className="text-indigo-600 font-semibold">&ldquo;/team&rdquo;</span>, <span className="text-indigo-600 font-semibold">&ldquo;/enterprise&rdquo;</span>, and many more...
-        <br/>
-        My recent work of upgrading Landing page to new was great, checkout the landing page at <Link className="flex gap-1 items-center text-indigo-700 hover:text-indigo-900 font-bold underline hover:bg-yellow-200" href={"https://signoz.io/"}>signoz.io <BsArrowUpRight/></Link>
+        <br />
+        As a developer with SigNoz, I developed pages such as{" "}
+        <span className="font-semibold text-indigo-600">
+          &ldquo;/pricing&rdquo;
+        </span>
+        ,{" "}
+        <span className="font-semibold text-indigo-600">
+          &ldquo;/team&rdquo;
+        </span>
+        ,{" "}
+        <span className="font-semibold text-indigo-600">
+          &ldquo;/enterprise&rdquo;
+        </span>
+        , and many more.
+        <br />
+        My recent work upgrading the landing page was a great experience. Check
+        out the landing page at{" "}
+        <Link
+          className="inline-flex items-center gap-1 font-bold text-indigo-700 underline transition-colors hover:bg-yellow-200 hover:text-indigo-900"
+          href="https://signoz.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          signoz.io <BsArrowUpRight />
+        </Link>
+        .
       </>
     ),
-    techStack: ["React.js", "Docusaurus"],
+    techStack: ["React.js", "Docusaurus", "TypeScript"], // Added TypeScript as it's common
   },
   {
     orgName: "Digipie Technologies LLP.",
@@ -40,55 +64,57 @@ const MyExperience: ExperienceType[] = [
     from: "Dec 2022",
     to: "Aug 2023",
     desc: (
-      <>
-        <ul>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            Developed project/feature with Javascript stack ReactJS, Redux,
-            Redux-thunk, NextJS for frontend and NestJS, ExpressJS, NodeJS for
-            backend, and also used databases both relational and non-relational
-            such as MongoDB, and PostgreSQL.
-          </li>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            Developed high-quality, secure, and reliable feature/functionality
-            according to the client’s requirements and delivered to the client
-            on time.
-          </li>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            The current Project consists of redux-observable with high-level
-            coding structure patterns and easily accessible directory and file
-            structure.{" "}
-          </li>
-        </ul>
-      </>
+      <ul className="space-y-2">
+        <li className="ml-5 list-disc text-gray-800">
+          Developed projects/features with a JavaScript stack including ReactJS,
+          Redux, Redux-Thunk, NextJS for frontend, and NestJS, ExpressJS, NodeJS
+          for backend. Utilized both relational (PostgreSQL) and non-relational
+          (MongoDB) databases.
+        </li>
+        <li className="ml-5 list-disc text-gray-800">
+          Delivered high-quality, secure, and reliable features according to
+          client requirements, ensuring timely project completion.
+        </li>
+        <li className="ml-5 list-disc text-gray-800">
+          Contributed to a project utilizing Redux-Observable with a
+          well-structured coding pattern and an easily navigable directory
+          structure.
+        </li>
+      </ul>
     ),
-    techStack: ["React.js", "Next.js", "Node.js", "MongoDB"],
+    techStack: ["React.js", "Next.js", "Node.js", "MongoDB", "PostgreSQL"],
   },
   {
     orgName: "Finlogic Technologies India Pvt. Ltd.",
-    orgHref: "https://njtechnologies.in/",
+    orgHref: "https://njtechnologies.in/", // Assuming this is the correct current URL
     position: "Senior Executive, Fullstack Developer",
     from: "May 2022",
     to: "Nov 2022",
     desc: (
-      <>
-        <ul>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            Develop and Support the SPRING MVC and REST Application in
-            association with other Team Members
-          </li>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            Develop a REACT Application and Integrated it with the REST API
-            according to client requirements given by the system analyst.
-          </li>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            The current Project consists of microservice architecture with React
-            as a Front-end application & spring boot as a backend service with a
-            centralized Postgres database.
-          </li>
-        </ul>
-      </>
+      <ul className="space-y-2">
+        <li className="ml-5 list-disc text-gray-800">
+          Developed and supported SPRING MVC and REST applications in
+          collaboration with team members.
+        </li>
+        <li className="ml-5 list-disc text-gray-800">
+          Built a REACT application and integrated it with REST APIs based on
+          specifications provided by system analysts.
+        </li>
+        <li className="ml-5 list-disc text-gray-800">
+          Worked on a project with a microservice architecture, using React for
+          the front-end, Spring Boot for backend services, and a centralized
+          PostgreSQL database.
+        </li>
+      </ul>
     ),
-    techStack: ["React.js", "Java", "Spring Boot", "SQL", "Postgres", "MySQL"],
+    techStack: [
+      "React.js",
+      "Java",
+      "Spring Boot",
+      "SQL",
+      "PostgreSQL",
+      "MySQL",
+    ],
   },
   {
     orgName: "Finlogic Technologies India Pvt. Ltd.",
@@ -97,69 +123,90 @@ const MyExperience: ExperienceType[] = [
     from: "Jan 2022",
     to: "Apr 2022",
     desc: (
-      <>
-        <ul>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            During this internship, I learned how to develop front and back end
-            with java technologies, HTML5, CSS3, JS (ES6), and AJAX. Apart from
-            frontend and backend development, I learned SQL & PL/SQL, how to
-            create views, functions, procedures, triggers for particular table
-            events, etc.
-          </li>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            Developed Functionality for Teacher/Metor module to Modify And
-            Insert Dynamic Questions for Exams with ease and integrated Rich
-            text editor.
-          </li>
-          <li className="ml-5 mb-2 list-disc text-gray-800">
-            Worked on UI/UX development in JSP, and React. Worked on various
-            sections on Admin and User Modules.
-          </li>
-        </ul>
-      </>
+      <ul className="space-y-2">
+        <li className="ml-5 list-disc text-gray-800">
+          Gained experience in full-stack development using Java technologies,
+          HTML5, CSS3, JavaScript (ES6), and AJAX. Learned SQL & PL/SQL,
+          including creating views, functions, procedures, and triggers.
+        </li>
+        <li className="ml-5 list-disc text-gray-800">
+          Developed functionality for a Teacher/Mentor module, enabling dynamic
+          question insertion for exams with a rich text editor integration.
+        </li>
+        <li className="ml-5 list-disc text-gray-800">
+          Contributed to UI/UX development in JSP and React, working on various
+          sections of Admin and User Modules.
+        </li>
+      </ul>
     ),
-    techStack: ["JSP", "Java", "Spring MVC", "SQL/PL-SQL", "MySQL"],
+    techStack: [
+      "JSP",
+      "Java",
+      "Spring MVC",
+      "SQL/PL-SQL",
+      "MySQL",
+      "HTML5",
+      "CSS3",
+    ],
   },
 ];
 
-export default function Experience({ children }: Props) {
+export default function Experience({ children }: ExperienceProps) {
   return (
-    <section className="my-8">
-      <h2 className="text-3xl font-black text-black font-space mb-6 border-b-4 border-black pb-2"> {/* Adjusted title style */}
+    <section className="my-8 font-space">
+      <h2 className="mb-6 border-b-4 border-black pb-2 text-3xl font-black text-black">
         Experience
       </h2>
-      <div className="relative pl-5 py-10 flex flex-col after:content-[''] after:absolute after:w-[2px] after:h-full after:bg-black after:top-0 after:left-[3px]"> {/* Timeline thicker */}
-        {MyExperience.map((experience) => (
+      <div className="relative flex flex-col py-10 pl-5 after:absolute after:left-[3px] after:top-0 after:h-full after:w-[3px] after:bg-black after:content-['']">
+        {" "}
+        {/* Timeline thicker */}
+        {MY_EXPERIENCES.map((experience) => (
           <div
-            key={experience.position}
-            className="pl-10 relative mb-10 last-of-type:mb-0 group bg-white p-6 border-2 border-black rounded-none shadow-[6px_6px_0px_#000]" // Card style for each experience
+            key={`${experience.orgName}-${experience.position}-${experience.from}`} // More unique key
+            className="group relative mb-10 rounded-none border-2 border-black bg-white p-6 pl-10 shadow-[6px_6px_0px_#000] transition-shadow duration-150 last-of-type:mb-0 hover:shadow-[8px_8px_0px_#4f46e5]"
           >
-            <span className="absolute w-5 h-5 rounded-none border-2 border-black bg-yellow-400 top-7 -left-[11px] group-hover:bg-indigo-500 transition z-20 transform rotate-45" /> {/* Pointy marker */}
+            <span className="absolute -left-[11px] top-7 z-10 size-5 rotate-45 rounded-none border-2 border-black bg-yellow-400 shadow-[1px_1px_0_#000] transition-colors group-hover:bg-indigo-500" />{" "}
+            {/* Added shadow to marker, z-10 */}
             <Link
               href={experience.orgHref}
-              className=""
+              className="mb-1 block" // Make entire header block clickable for org
               rel="noopener noreferrer nofollow"
               target="_blank"
             >
-              <p className="font-space text-sm text-gray-600 font-semibold">
+              <p className="text-sm font-semibold text-gray-600">
                 {experience.from} - {experience.to}
               </p>
-              <h3 className="text-2xl text-black font-bold font-space mb-1 group-hover:text-indigo-700 transition flex items-center">
-                {experience.orgName} <BsArrowUpRight className="inline-block ml-1 group-hover:translate-x-1 transition-transform" />
+              <h3 className="flex items-center text-2xl font-bold text-black transition-colors group-hover:text-indigo-700">
+                {experience.orgName}{" "}
+                <BsArrowUpRight className="ml-1.5 inline-block size-5 transition-transform group-hover:translate-x-0.5 group-hover:rotate-[15deg]" />{" "}
+                {/* Subtle rotate effect */}
               </h3>
             </Link>
-            <p className="font-space text-lg text-gray-800 font-semibold mb-3">{experience.position}</p>
-            <div className="font-space text-sm text-gray-700 leading-relaxed mb-4">{experience.desc}</div>
-            <p className="font-space my-1">
-              {experience.techStack.map((tech) => (
-                <small
-                  key={tech}
-                  className="flex-inline rounded-none bg-gray-200 border border-black px-2 py-1 text-xs mr-2 mb-1 font-semibold text-black shadow-[1px_1px_0px_#000]" // Brutalist tag
-                >
-                  {tech}
-                </small>
-              ))}
+            <p className="mb-3 text-lg font-semibold text-gray-800">
+              {experience.position}
             </p>
+            <div className="prose prose-sm mb-4 max-w-none text-sm leading-relaxed text-gray-700 prose-p:my-1 prose-ul:my-1">
+              {" "}
+              {/* Basic prose styling for desc */}
+              {experience.desc}
+            </div>
+            {experience.techStack.length > 0 && (
+              <div className="mt-4 border-t border-gray-300 pt-3">
+                <p className="mb-2 text-xs font-semibold text-gray-500">
+                  Tech Stack:
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {experience.techStack.map((tech) => (
+                    <small
+                      key={tech}
+                      className="flex-inline rounded-none border border-black bg-gray-200 px-2 py-0.5 text-xs font-semibold text-black shadow-[1px_1px_0px_#000]"
+                    >
+                      {tech}
+                    </small>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

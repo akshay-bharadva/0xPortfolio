@@ -3,57 +3,58 @@ import { PropsWithChildren } from "react";
 import { AiOutlineMail } from "react-icons/ai";
 import { BsGithub, BsLinkedin } from "react-icons/bs";
 
-type Props = PropsWithChildren;
+type LittleAboutMyselfProps = PropsWithChildren; // Renamed Props
 
-export default function LittleAboutMyselfVariant3({ children }: Props) {
+export default function LittleAboutMyself({
+  children,
+}: LittleAboutMyselfProps) {
+  // Renamed component
   return (
-    <section className="py-16">
-      <div className="flex flex-col gap-8 items-center justify-center w-full h-full text-center">
-        {/* Name and Title Block */}
+    <section className="py-16 font-space">
+      <div className="flex size-full flex-col items-center justify-center gap-8 text-center">
         <div className="flex flex-col gap-1 text-5xl sm:text-6xl md:text-7xl">
-          <p className="font-space text-gray-700 text-4xl sm:text-5xl">Heya, I'm</p>
-          <h2 className="text-black font-space font-black">
+          <p className="text-4xl text-gray-700 sm:text-5xl">Heya, I&apos;m</p>{" "}
+          {/* Apostrophe fixed */}
+          <h1 className="font-black text-black">
+            {" "}
+            {/* Changed h2 to h1 for semantic main heading */}
             Akshay Bharadva
-          </h2>
-          <p className="font-space text-indigo-700 font-bold text-3xl sm:text-4xl md:text-5xl mt-1">
+          </h1>
+          <p className="mt-1 text-3xl font-bold text-indigo-700 sm:text-4xl md:text-5xl">
             Fullstack Developer.
           </p>
         </div>
 
-        {/* Social Links */}
         <div className="flex gap-3 sm:gap-4">
           <Link
-            className="p-3 text-2xl sm:text-3xl text-black bg-white border-2 border-black rounded-none shadow-[3px_3px_0px_#000] hover:bg-yellow-300 hover:shadow-[3px_3px_0px_#4f46e5] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#4f46e5] transition-all"
+            className="rounded-none border-2 border-black bg-white p-3 text-2xl text-black shadow-[3px_3px_0px_#000] transition-all duration-150 hover:bg-yellow-300 hover:shadow-[3px_3px_0px_#4f46e5] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-100 active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0px_#4f46e5] sm:text-3xl"
             href="https://github.com/akshay-bharadva"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             target="_blank"
             aria-label="GitHub Profile"
           >
             <BsGithub />
           </Link>
           <Link
-            className="p-3 text-2xl sm:text-3xl text-black bg-white border-2 border-black rounded-none shadow-[3px_3px_0px_#000] hover:bg-yellow-300 hover:shadow-[3px_3px_0px_#4f46e5] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#4f46e5] transition-all"
+            className="rounded-none border-2 border-black bg-white p-3 text-2xl text-black shadow-[3px_3px_0px_#000] transition-all duration-150 hover:bg-yellow-300 hover:shadow-[3px_3px_0px_#4f46e5] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-100 active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0px_#4f46e5] sm:text-3xl"
             href="https://www.linkedin.com/in/akshay-bharadva/"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             target="_blank"
             aria-label="LinkedIn Profile"
           >
             <BsLinkedin />
           </Link>
           <Link
-            className="p-3 text-2xl sm:text-3xl text-black bg-white border-2 border-black rounded-none shadow-[3px_3px_0px_#000] hover:bg-yellow-300 hover:shadow-[3px_3px_0px_#4f46e5] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#4f46e5] transition-all"
-            href="mailto:akshaybharadva19@gmail.com"
-            rel="noreferrer"
-            target="_blank"
+            className="rounded-none border-2 border-black bg-white p-3 text-2xl text-black shadow-[3px_3px_0px_#000] transition-all duration-150 hover:bg-yellow-300 hover:shadow-[3px_3px_0px_#4f46e5] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-100 active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0px_#4f46e5] sm:text-3xl"
+            href="mailto:akshaybharadva19@gmail.com" // No target needed for mailto
             aria-label="Email Akshay"
           >
             <AiOutlineMail />
           </Link>
         </div>
 
-        {/* Optional: Place for children prop content (e.g., a short bio) */}
         {children && (
-          <div className="mt-4 text-lg text-gray-700 font-space max-w-2xl px-4">
+          <div className="mt-4 max-w-2xl px-4 text-lg text-gray-700">
             {children}
           </div>
         )}

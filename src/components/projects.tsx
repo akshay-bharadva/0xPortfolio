@@ -2,41 +2,65 @@ import Link from "next/link";
 import { PropsWithChildren, useState, useEffect } from "react";
 import { BsArrowUpRight } from "react-icons/bs";
 import ProjectCard from "./project-card";
-import { Button } from "@/components/ui/button"; // Assuming Button is updated
+import { Button } from "@/components/ui/button";
+import type { GitHubRepo } from "@/types"; // Import specific type
+import { useRouter } from 'next/navigation'
 
-type Props = PropsWithChildren;
+type ProjectsProps = PropsWithChildren; // Renamed Props
 
-const USERNAME = `akshay-bharadva`;
-const URL = `https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=9`; // Fetch 9 most recently updated
+const GITHUB_USERNAME = `akshay-bharadva`; // Use a constant for username
+const GITHUB_REPOS_URL = `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=9&type=owner`; // Fetch only owner repos
 
-export default function Projects({ children }: Props) {
-  const [projects, setProjects] = useState<any[]>([]);
+export default function Projects({ children }: ProjectsProps) {
+  const [projects, setProjects] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
 
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch(URL)
-      .then((response) => {
+    fetch(GITHUB_REPOS_URL, {
+      // Optional: Add headers if needed, e.g., for higher rate limits with a token
+      // headers: {
+      //   'Authorization': `token YOUR_GITHUB_TOKEN`
+      // }
+    })
+      .then(async (response) => {
+        // Make async to await response.json()
         if (!response.ok) {
-          throw new Error(`GitHub API request failed: ${response.status}`);
+          const errorData = await response
+            .json()
+            .catch(() => ({ message: response.statusText }));
+          throw new Error(
+            `GitHub API request failed: ${response.status} - ${errorData.message || "Unknown error"}`,
+          );
         }
         return response.json();
       })
-      .then((data) => {
+      .then((data: GitHubRepo[]) => {
+        // Type the data
         const filteredProjects = data
-          .filter((p: any) => !p.private && p.language && !p.fork && !p.archived && !p.name.includes(USERNAME))
-          // Sorting by updated_at is already handled by API param `sort=updated`
-          // Additional sort by description length (shortest first for some reason, might want to reconsider or remove)
+          .filter(
+            (p) =>
+              !p.private &&
+              p.language &&
+              !p.fork &&
+              !p.archived &&
+              p.name !== GITHUB_USERNAME,
+          )
+          // Sorting by `stargazers_count` then `updated_at` might be more relevant than description length
           .sort(
-            (a: any, b: any) => (a.description?.length || 0) - (b.description?.length || 0)
+            (a, b) =>
+              (b.stargazers_count || 0) - (a.stargazers_count || 0) ||
+              new Date(b.updated_at).getTime() -
+              new Date(a.updated_at).getTime(),
           );
-        setProjects(filteredProjects);
+        setProjects(filteredProjects.slice(0, 9)); // Ensure only 9 are shown even if API returns more due to filtering changes
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to fetch projects:", err);
-        setError(err.message || "Could not load projects.");
+        setError(err.message || "Could not load projects at this time.");
       })
       .finally(() => {
         setLoading(false);
@@ -44,55 +68,56 @@ export default function Projects({ children }: Props) {
   }, []);
 
   return (
-    <section className="my-8">
-      <h2 className="text-3xl font-black text-black font-space mb-8 border-b-4 border-black pb-3"> {/* Adjusted title style */}
+    <section className="my-8 font-space">
+      <h2 className="mb-8 border-b-4 border-black pb-3 text-3xl font-black text-black">
         Projects
       </h2>
       {loading && (
-        <div className="text-center py-10">
-          <div className="inline-block animate-spin rounded-none h-12 w-12 border-t-4 border-b-4 border-black mx-auto"></div>
-          <p className="mt-4 font-bold text-black text-lg">Loading Projects...</p>
+        <div className="py-10 text-center">
+          <div className="mx-auto inline-block size-12 animate-spin rounded-none border-y-4 border-black"></div>
+          <p className="mt-4 text-lg font-bold text-black">
+            Loading Projects from GitHub...
+          </p>
         </div>
       )}
       {error && !loading && (
-        <div className="bg-red-100 border-2 border-red-500 text-red-700 font-semibold p-4 rounded-none shadow-[3px_3px_0_#B91C1C]">
+        <div className="rounded-none border-2 border-red-500 bg-red-100 p-4 font-semibold text-red-700 shadow-[3px_3px_0_#B91C1C]">
           Error: {error}
         </div>
       )}
       {!loading && !error && projects.length === 0 && (
-        <div className="text-center py-16 bg-yellow-100 border-2 border-black shadow-[6px_6px_0_#000] p-8 rounded-none">
-            <div className="max-w-md mx-auto">
-              <div className="w-24 h-24 mx-auto mb-6 bg-black text-yellow-300 text-5xl font-black flex items-center justify-center border-2 border-black rounded-none">
-                ?
-              </div>
-              <h3 className="text-2xl font-bold text-black mb-2">NO PROJECTS FOUND.</h3>
-              <p className="text-gray-700 font-medium">Maybe I'm busy building the next big thing. Or just napping.</p>
+        <div className="rounded-none border-2 border-black bg-yellow-100 p-8 py-16 text-center shadow-[6px_6px_0_#000]">
+          <div className="mx-auto max-w-md">
+            <div className="mx-auto mb-6 flex size-24 items-center justify-center rounded-none border-2 border-black bg-black text-5xl font-black text-yellow-300">
+              ?
             </div>
-          </div >
+            <h3 className="mb-2 text-2xl font-bold text-black">
+              NO PUBLIC PROJECTS FOUND.
+            </h3>
+            <p className="font-medium text-gray-700">
+              I might be working on something new, or they are private. Check
+              GitHub for more!
+            </p>
+          </div>
+        </div>
       )}
       {!loading && !error && projects.length > 0 && (
-        <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"> {/* Increased gap */}
-            {projects.map((project: any) => (
+        <>
+          {" "}
+          {/* Use Fragment shorthand */}
+          <div className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
           </div>
           <div className="text-center">
-            <Button asChild variant="outline">
-              <Link
-                href={`https://github.com/${USERNAME}?tab=repositories`}
-                rel="noopener noreferrer nofollow"
-                target="_blank"
-                className="text-md" // Button component handles most styling
-              >
-                <span>
-                  More on GitHub <BsArrowUpRight className="inline ml-1" />
-                </span>
-              </Link>
+            <Button variant="outline" size="lg" onClick={() => router.push(`https://github.com/${GITHUB_USERNAME}?tab=repositories`)} className="text-md">
+              More on GitHub <BsArrowUpRight className="ml-1.5 inline" />
             </Button>
           </div>
-        </div>
+        </>
       )}
+      {children && <div className="mt-8">{children}</div>}
     </section>
   );
 }

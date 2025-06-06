@@ -1,101 +1,77 @@
-import { supabase } from '@/supabase/client';
-import type { PortfolioSection } from '@/types';
-import Head from 'next/head';
+import Layout from "@/components/layout";
+import Head from "next/head";
+import { config as appConfig } from "@/lib/config";
+import { fetchPortfolioSectionsWithItems } from "@/lib/api";
+import type { PortfolioSection, PortfolioItem } from "@/types";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useEffect, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import Layout from '@/components/layout'; // Import Layout
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import Link from "next/link";
+import { BsArrowUpRight } from "react-icons/bs";
+import ExperienceComponent from "@/components/experience"; // Re-use Experience component
 
-
-// Neo-Brutalist Markdown Components for portfolio item descriptions
-const portfolioItemMarkdownComponents = {
-  p: ({ node, ...props }: any) => <p className="text-sm text-gray-700 leading-relaxed mb-2 font-space" {...props} />, // Added font-space
-  strong: ({ node, ...props }: any) => <strong className="font-bold text-black font-space" {...props} />, // Added font-space
-  em: ({ node, ...props }: any) => <em className="italic text-gray-600 font-space" {...props} />, // Added font-space
-  a: ({ node, ...props }: any) => <a className="text-indigo-700 hover:text-indigo-900 font-bold underline hover:bg-yellow-200 font-space" target="_blank" rel="noopener noreferrer" {...props} />, // Added font-space
-  ul: ({ node, ...props }: any) => <ul className="list-disc list-inside space-y-1 my-2 text-sm font-space" {...props} />, // Added font-space
-  ol: ({ node, ...props }: any) => <ol className="list-decimal list-inside space-y-1 my-2 text-sm font-space" {...props} />, // Added font-space
-  li: ({ node, ...props }: any) => <li className="text-gray-700 font-space" {...props} />, // Added font-space
-  // Add other elements as needed, keep them simple and functional
+// Markdown components for portfolio item descriptions (similar to blog's, but simpler)
+const portfolioMarkdownComponents: any = {
+  p: ({ node, ...props }: any) => (
+    <p className="mb-2 text-sm leading-relaxed text-gray-700" {...props} />
+  ),
+  a: ({ node, ...props }: any) => (
+    <Link
+      className="text-indigo-600 underline hover:bg-yellow-200 hover:text-indigo-800"
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    />
+  ),
+  ul: ({ node, ...props }: any) => (
+    <ul
+      className="list-inside list-disc space-y-0.5 pl-1 text-sm text-gray-700"
+      {...props}
+    />
+  ),
+  ol: ({ node, ...props }: any) => (
+    <ol
+      className="list-inside list-decimal space-y-0.5 pl-1 text-sm text-gray-700"
+      {...props}
+    />
+  ),
+  li: ({ node, ...props }: any) => <li className="mb-0.5" {...props} />,
 };
 
+export default function ShowcasePage() {
+  const { site: siteConfig } = appConfig;
+  const pageTitle = `Showcase | ${siteConfig.title}`;
+  const pageDescription = `A showcase of Akshay Bharadva's work, including projects, skills, and professional experience.`;
+  const pageUrl = `${siteConfig.url}/showcase/`;
 
-export default function HomePage() {
   const [sections, setSections] = useState<PortfolioSection[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  const AUTHOR_NAME = "Your Name"; // Customize
-  const PAGE_TITLE = "My Work Showcase"; // Customize
-  const PAGE_DESCRIPTION = "Projects, Experiments, Digital Things.";
-
-  const generatePortfolioJsonLd = (portfolioSections: PortfolioSection[]) => {
-    const itemListElements = portfolioSections.flatMap(section =>
-      section.portfolio_items?.map((item, index) => ({
-        "@type": "ListItem",
-        "position": index + 1, // This position is relative to the section, could be made global
-        "item": {
-          "@type": "CreativeWork", // or more specific like "SoftwareApplication", "WebSite"
-          "name": item.title,
-          "description": item.subtitle || item.description?.substring(0, 100) || item.title,
-          ...(item.image_url && { "image": item.image_url }),
-          ...(item.link_url && { "url": item.link_url }),
-          "author": {
-            "@type": "Person",
-            "name": AUTHOR_NAME
-          }
-        }
-      })) || []
-    ).filter(Boolean);
-
-
-    const jsonLd = {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage", // Or ItemList if that's more fitting
-      "name": PAGE_TITLE,
-      "description": PAGE_DESCRIPTION,
-      "url": `${SITE_URL}/showcase/`,
-      "author": {
-        "@type": "Person",
-        "name": AUTHOR_NAME
-      },
-      ...(itemListElements.length > 0 && {
-        "mainEntity": {
-          "@type": "ItemList",
-          "itemListElement": itemListElements
-        }
-      }),
-    };
-    return JSON.stringify(jsonLd);
-  };
-
   useEffect(() => {
-    const fetchPortfolioData = async () => {
-      setLoading(true); setError(null);
-      const { data, error: fetchError } = await supabase
-        .from('portfolio_sections')
-        .select(`*, portfolio_items (*)`)
-        .order('display_order', { ascending: true })
-        .order('display_order', { foreignTable: 'portfolio_items', ascending: true });
-
-      if (fetchError) {
-        console.error("Error fetching portfolio sections:", fetchError);
-        setError(fetchError.message); setSections([]);
-      } else {
-        setSections(data || []);
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const sectionsData = await fetchPortfolioSectionsWithItems();
+        setSections(sectionsData);
+      } catch (e: any) {
+        setError(e.message || "Failed to load showcase content.");
       }
-      setLoading(false);
+      setIsLoading(false);
     };
-    fetchPortfolioData();
+    loadData();
   }, []);
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <Layout> {/* Added Layout */}
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 font-space"> {/* Added font-space */}
-          <div className="p-6 bg-white border-2 border-black font-bold text-lg">Loading Portfolio...</div>
+      <Layout>
+        <div className="flex min-h-screen items-center justify-center bg-gray-100 font-space">
+          <div className="rounded-none border-2 border-black bg-white p-6 text-lg font-bold">
+            Loading Showcase...
+          </div>
         </div>
       </Layout>
     );
@@ -103,10 +79,10 @@ export default function HomePage() {
 
   if (error) {
     return (
-      <Layout> {/* Added Layout */}
-        <div className="min-h-screen flex items-center justify-center bg-red-100 p-4 font-space"> {/* Added font-space */}
-          <div className="p-6 bg-white border-2 border-red-500 text-red-700 font-semibold rounded-none">
-            Error loading portfolio: {error}
+      <Layout>
+        <div className="flex min-h-screen items-center justify-center bg-red-100 p-4 font-space">
+          <div className="rounded-none border-2 border-red-500 bg-white p-6 font-semibold text-red-700">
+            Error loading showcase: {error}
           </div>
         </div>
       </Layout>
@@ -114,100 +90,153 @@ export default function HomePage() {
   }
 
   return (
-    <Layout> {/* Added Layout */}
-      <div className="bg-gray-100 min-h-screen font-space"> {/* Added font-space */}
-        <Head>
-          <title>My Portfolio | Neo-Brutal</title>
-          <meta name="description" content={PAGE_DESCRIPTION} />
-          {/* OG and Twitter Tags for Portfolio Page */}
-          <meta property="og:title" content={PAGE_TITLE} />
-          <meta property="og:description" content={PAGE_DESCRIPTION} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={`${SITE_URL}/showcase/`} />
-          {/* Consider a default OG image for the portfolio page itself */}
-          {/* <meta property="og:image" content={`${SITE_URL}/default-portfolio-og-image.png`} /> */}
-          <meta name="twitter:card" content="summary_large_image" />
-          {/* JSON-LD Script */}
-          {!loading && sections.length > 0 && (
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{ __html: generatePortfolioJsonLd(sections) }}
-            />
-          )}
-          <link rel="canonical" href={`${SITE_URL}/showcase/`} />
-        </Head>
-        <main className="max-w-4xl mx-auto px-4 py-12">
-          <motion.header
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-12 text-center border-b-4 border-black pb-6"
+    <Layout>
+      <Head>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:url" content={pageUrl} />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <link rel="canonical" href={pageUrl} />
+      </Head>
+
+      <main className="py-8 font-space md:py-12">
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-12 border-b-4 border-black pb-6 text-center"
+        >
+          <h1 className="mb-3 text-5xl font-black text-black md:text-6xl">
+            MY SHOWCASE
+          </h1>
+          <p className="text-xl font-semibold text-gray-700">
+            A curated collection of my work, skills, and journey.
+          </p>
+        </motion.header>
+
+        {sections.length === 0 && !isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="rounded-none border-2 border-black bg-yellow-100 p-8 py-16 text-center shadow-[6px_6px_0_#000]"
           >
-            <h1 className="text-5xl md:text-6xl font-black text-black mb-3">MY WORK</h1>
-            <p className="text-xl text-gray-700 font-semibold">Projects. Experiments. Digital Things.</p>
-          </motion.header>
-
-          {sections.length === 0 && !loading && (
-            <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-              className="text-center py-16 bg-yellow-100 border-2 border-black shadow-[6px_6px_0_#000] p-8"
-            >
-              <div className="max-w-md mx-auto">
-                <div className="w-24 h-24 mx-auto mb-6 bg-black text-yellow-300 text-5xl font-black flex items-center justify-center border-2 border-black">
-                  !
-                </div>
-                <h3 className="text-2xl font-bold text-black mb-2">CONTENT TBD.</h3>
-                <p className="text-gray-700 font-medium">The portfolio is currently under construction. Check back later!</p>
+            <div className="mx-auto max-w-md">
+              <div className="mx-auto mb-6 flex size-24 items-center justify-center rounded-none border-2 border-black bg-black text-5xl font-black text-yellow-300">
+                🚧
               </div>
-            </motion.div>
-          )}
+              <h3 className="mb-2 text-2xl font-bold text-black">
+                CONTENT UNDER CONSTRUCTION
+              </h3>
+              <p className="font-medium text-gray-700">
+                This showcase is currently being polished. Check back soon!
+              </p>
+            </div>
+          </motion.div>
+        )}
 
-          {sections.map((section, index) => (
-            <motion.section
-              key={section.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 * index, duration: 0.4 }}
-              className="mb-12 p-6 bg-white border-2 border-black rounded-none shadow-[8px_8px_0px_rgba(0,0,0,0.8)]"
-            >
-              <h2 className="text-3xl font-black mb-6 text-black border-b-2 border-black pb-3">{section.title.toUpperCase()}</h2>
-              {section.type === 'markdown' && section.content && (
-                <div className="text-gray-800 text-base leading-relaxed font-space"> {/* Added font-space */}
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={portfolioItemMarkdownComponents}>{section.content}</ReactMarkdown>
+        {sections.map((section, sectionIndex) => (
+          <motion.section
+            key={section.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 * sectionIndex, duration: 0.4 }}
+            className="mb-12"
+          >
+            <h2 className="mb-6 border-b-2 border-black pb-2 text-3xl font-black text-black">
+              {section.title}
+            </h2>
+            {section.type === "markdown" && section.content && (
+              <div className="rounded-none border-2 border-black bg-white p-6 shadow-[4px_4px_0_#000]">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeRaw]}
+                  components={portfolioMarkdownComponents}
+                >
+                  {section.content}
+                </ReactMarkdown>
+              </div>
+            )}
+            {section.type === "list_items" &&
+              section.portfolio_items &&
+              section.portfolio_items.length > 0 && (
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {section.portfolio_items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="group flex flex-col overflow-hidden rounded-none border-2 border-black bg-white shadow-[4px_4px_0px_#000] transition-all duration-150 hover:shadow-[6px_6px_0px_#4f46e5]"
+                    >
+                      {item.image_url && (
+                        <div className="relative h-48 w-full overflow-hidden border-b-2 border-black">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.image_url}
+                            alt={item.title}
+                            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+                      <div className="flex grow flex-col p-5">
+                        <h3 className="mb-1 text-xl font-bold text-black transition-colors group-hover:text-indigo-700">
+                          {item.title}
+                        </h3>
+                        {item.subtitle && (
+                          <p className="mb-2 text-sm font-semibold text-indigo-700">
+                            {item.subtitle}
+                          </p>
+                        )}
+                        {item.description && (
+                          <div className="prose prose-sm mb-3 line-clamp-4 max-w-none text-sm leading-relaxed text-gray-700 prose-p:my-1 prose-ul:my-1">
+                            <ReactMarkdown
+                              remarkPlugins={[remarkGfm]}
+                              rehypePlugins={[rehypeRaw]}
+                              components={portfolioMarkdownComponents}
+                            >
+                              {item.description}
+                            </ReactMarkdown>
+                          </div>
+                        )}
+                        <div className="mt-auto">
+                          {" "}
+                          {/* Push link and tags to bottom */}
+                          {item.link_url && (
+                            <Link
+                              href={item.link_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="-ml-2 inline-flex items-center rounded-none border-2 border-transparent px-2 py-1 text-sm font-bold text-indigo-700 transition-all hover:border-black hover:bg-yellow-200 hover:text-indigo-900"
+                            >
+                              View Project <BsArrowUpRight className="ml-1.5" />
+                            </Link>
+                          )}
+                          {item.tags && item.tags.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-1.5">
+                              {item.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="rounded-none border border-black bg-gray-200 px-2 py-0.5 text-xs font-semibold text-black"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
-              {section.type === 'list_items' && section.portfolio_items && section.portfolio_items.length > 0 && (
-                <ul className="space-y-8">
-                  {section.portfolio_items.map(item => (
-                    <li key={item.id} className="p-4 sm:p-6 border-2 border-black rounded-none bg-gray-50 shadow-[5px_5px_0_#000] hover:shadow-[6px_6px_0_#4f46e5] transition-shadow duration-150">
-                      <h3 className="text-xl sm:text-2xl font-bold text-black mb-1">{item.title}</h3>
-                      {item.subtitle && <p className="text-md text-indigo-700 font-semibold mb-3">{item.subtitle}</p>}
-                      {item.image_url && <img src={item.image_url} alt={item.title} className="my-4 max-h-72 w-full object-contain rounded-none border-2 border-black" loading="lazy" />}
-                      {item.description && (
-                        <div className="my-3 font-space"> {/* Added font-space */}
-                          <ReactMarkdown remarkPlugins={[remarkGfm]} components={portfolioItemMarkdownComponents}>{item.description}</ReactMarkdown>
-                        </div>
-                      )}
-                      {item.link_url &&
-                        <a href={item.link_url} target="_blank" rel="noopener noreferrer"
-                          className="inline-flex items-center text-sm font-bold text-white bg-black border-2 border-black px-4 py-2 rounded-none shadow-[3px_3px_0_#4A5568] hover:bg-indigo-700 hover:shadow-[3px_3px_0_#2C3E50] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0_#2C3E50] transition-all group mt-3 font-space" // Added font-space
-                        >
-                          View Project
-                          <svg className="w-4 h-4 ml-2 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </a>}
-                      {item.tags && item.tags.length > 0 && (
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {item.tags.map(tag => <span key={tag} className="text-xs bg-yellow-300 text-black px-2 py-1 rounded-none border border-black font-semibold font-space">{tag}</span>)} {/* Added font-space */}
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </motion.section>
-          ))}
-        </main>
-      </div>
+          </motion.section>
+        ))}
+
+        {/* Integrate Experience Section */}
+        <ExperienceComponent />
+      </main>
     </Layout>
   );
 }

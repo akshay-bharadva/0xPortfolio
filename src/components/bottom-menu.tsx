@@ -8,10 +8,10 @@ import {
   AiOutlineExperiment,
   AiFillExperiment, // Or BsBriefcaseFill
   AiOutlineRead,
-  AiFillRead,       // Or BsBookFill
+  AiFillRead, // Or BsBookFill
   AiOutlineUser,
 } from "react-icons/ai"; // Example icons, choose what fits best
-import { FaUser, FaRegUser  } from "react-icons/fa";
+import { FaUser, FaRegUser } from "react-icons/fa";
 
 import { IconType } from "react-icons";
 
@@ -51,7 +51,7 @@ const NavLinks: NavLink[] = [
   {
     href: "/about",
     label: "About",
-    icon: FaRegUser , // Icon for "About" (profile-like)
+    icon: FaRegUser, // Icon for "About" (profile-like)
     activeIcon: FaUser,
   },
 ];
@@ -60,17 +60,19 @@ export default function BottomNavBar() {
   const router = useRouter();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t-2 border-black shadow-[0px_-2px_0px_#000] z-40 font-space">
-      <div className="flex justify-around items-center h-16 px-2">
+    <nav className="fixed bottom-0 left-0 z-40 w-full border-t-2 border-black bg-white font-space shadow-[0px_-2px_0px_#000] md:hidden">
+      <div className="flex h-16 items-center justify-around px-2">
         {NavLinks.map((link) => {
-          const isActive = router.pathname === link.href || (link.href !== "/" && router.pathname.startsWith(link.href));
+          const isActive =
+            router.pathname === link.href ||
+            (link.href !== "/" && router.pathname.startsWith(link.href));
           const IconComponent = isActive ? link.activeIcon : link.icon;
 
           return (
             <Link
               href={link.href}
               key={link.href}
-              className={`flex flex-col items-center justify-center p-2 rounded-none transition-all duration-150 group focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white
+              className={`group flex flex-col items-center justify-center rounded-none p-2 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-1 focus-visible:ring-offset-white
                 ${
                   isActive
                     ? "text-indigo-700" // Active color, could be black too
@@ -78,7 +80,7 @@ export default function BottomNavBar() {
                 }`}
               aria-label={link.label}
             >
-              <IconComponent className="text-2xl sm:text-3xl mb-0.5" />
+              <IconComponent className="mb-0.5 text-2xl sm:text-3xl" />
               <span
                 className={`text-xs font-semibold 
                   ${isActive ? "text-indigo-700" : "text-gray-500 group-hover:text-black"}`}

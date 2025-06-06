@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useToast } from "@/hooks/use-toast" // Ensure this path is correct
+import { useToast } from "@/hooks/use-toast";
 import {
   Toast,
   ToastClose,
@@ -8,28 +8,29 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "@/components/ui/toast" // Ensure this path is correct
+  ToastAction, // Import ToastAction if it's used directly
+} from "@/components/ui/toast";
 
 export function Toaster() {
-  const { toasts } = useToast()
+  const { toasts } = useToast();
 
   return (
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
-          <Toast key={id} {...props}> {/* Toast itself is styled in toast.tsx */}
+          <Toast key={id} {...props}>
             <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>} {/* ToastTitle is styled in toast.tsx */}
+              {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
-                <ToastDescription>{description}</ToastDescription> /* ToastDescription is styled in toast.tsx */
+                <ToastDescription>{description}</ToastDescription>
               )}
             </div>
-            {action} {/* ToastAction is styled in toast.tsx */}
-            <ToastClose /> {/* ToastClose is styled in toast.tsx */}
+            {action}
+            <ToastClose />
           </Toast>
-        )
+        );
       })}
-      <ToastViewport /> {/* Viewport is generally fine */}
+      <ToastViewport />
     </ToastProvider>
-  )
+  );
 }

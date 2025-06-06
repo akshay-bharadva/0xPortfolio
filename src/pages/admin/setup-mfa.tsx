@@ -1,10 +1,10 @@
-import SupabaseMFASetup from '@/components/admin/auth/SupabaseMFASetup';
-import Layout from '@/components/layout'; // Import Layout
+import SupabaseMFASetup from "@/components/admin/auth/SupabaseMFASetup";
+import Layout from "@/components/layout";
 
 export default function AdminMFASetupPage() {
   return (
-    <Layout> {/* Added Layout */}
-      <div className="font-space"> {/* Ensure font-space is applied if not inherited */}
+    <Layout>
+      <div className="font-space">
         <SupabaseMFASetup />
       </div>
     </Layout>

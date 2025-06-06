@@ -1,89 +1,142 @@
-import type { BlogPost } from "@/types";
-import { supabase } from "@/supabase/client"
+import type { BlogPost, PortfolioSection } from "@/types"; // Added PortfolioSection
+import { supabase } from "@/supabase/client";
 
-const mockBlogContent = `
-<h2>Introduction</h2>
-<p>This is a sample blog post content. In a real application, this would be fetched from Supabase.</p>
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl.</p>
-<h2>Main Content</h2>
-<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.</p>
-<ul>
-  <li>Point one about the topic</li>
-  <li>Another important consideration</li>
-  <li>Final thoughts on this section</li>
-</ul>
-<h2>Conclusion</h2>
-<p>In conclusion, this is just placeholder text. In a real blog, you would have actual content here that provides value to your readers.</p>
-`;
+// --- BLOG POSTS ---
 
-const mockBlogPosts: BlogPost[] = [];
+// Mock data is not used if Supabase is primary source.
+// const mockBlogContent = `...`;
+// const mockBlogPosts: BlogPost[] = [];
 
-const getSavedPosts = (): BlogPost[] | null => {
+// LocalStorage caching for blog posts - consider if this is still desired with Supabase.
+// It can lead to stale data if not managed carefully.
+// For a dynamic site with an admin panel, fetching fresh from Supabase is often preferred.
+const getSavedPostsFromLocalStorage = (): BlogPost[] | null => {
   if (typeof window !== "undefined") {
-    const savedPosts = localStorage.getItem("blog_posts");
+    const savedPosts = localStorage.getItem("blog_posts_cache"); // Use a distinct key
     if (savedPosts) {
       try {
+        // TODO: Add validation for the parsed data structure and potentially a TTL for cache
         return JSON.parse(savedPosts) as BlogPost[];
       } catch (error) {
-        console.error("Error parsing saved posts:", error);
+        console.error("Error parsing saved posts from localStorage:", error);
+        localStorage.removeItem("blog_posts_cache"); // Clear corrupted cache
       }
     }
   }
   return null;
 };
 
-export async function fetchBlogPosts(): Promise<BlogPost[]> {
-  const savedPosts = getSavedPosts();
-  if (savedPosts) {
-    return savedPosts;
+const savePostsToLocalStorage = (posts: BlogPost[]) => {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("blog_posts_cache", JSON.stringify(posts));
+    } catch (error) {
+      console.error("Error saving posts to localStorage:", error);
+    }
   }
+};
+
+export async function fetchPublishedBlogPosts(): Promise<BlogPost[]> {
+  // const cachedPosts = getSavedPostsFromLocalStorage();
+  // if (cachedPosts) return cachedPosts; // Consider cache strategy (e.g., stale-while-revalidate)
 
   try {
     const { data, error } = await supabase
       .from("blog_posts")
-      .select("*");
+      .select("*")
+      .eq("published", true) // Fetch only published posts for public site
+      .order("published_at", { ascending: false }); // Order by published date
 
-    if (error || !data) {
-      throw new Error(error?.message || "Failed to fetch posts from Supabase");
+    if (error) {
+      throw new Error(error.message || "Failed to fetch posts from Supabase");
     }
-
-    return data as BlogPost[];
+    // savePostsToLocalStorage(data || []); // Cache fresh data
+    return data || [];
   } catch (error) {
-    console.error("Error fetching blog posts:", error);
-    return mockBlogPosts; // Fallback
+    console.error("Error fetching published blog posts:", error);
+    return []; // Return empty array on error to prevent site break
   }
 }
 
-export async function fetchBlogPostBySlug(slug: string): Promise<BlogPost> {
-  const savedPosts = getSavedPosts();
-  let posts = mockBlogPosts;
+export async function fetchBlogPostBySlug(
+  slug: string,
+): Promise<BlogPost | null> {
+  // Return null if not found
+  // const cachedPosts = getSavedPostsFromLocalStorage();
+  // const cachedPost = cachedPosts?.find(post => post.slug === slug && post.published);
+  // if (cachedPost) return cachedPost;
 
-  if (savedPosts) {
-    posts = savedPosts;
-  }
-
-  // Try to find it from saved or mock
-  let post = posts.find((post) => post.slug === slug);
-
-  if (post) {
-    return post;
-  }
-
-  // Fallback to Supabase fetch
   try {
     const { data, error } = await supabase
       .from("blog_posts")
       .select("*")
       .eq("slug", slug)
-      .single();
+      .eq("published", true) // Ensure only published post is fetched by slug publicly
+      .single(); // Expect a single result or null
 
-    if (error || !data) {
-      throw new Error(error?.message || "Post not found");
+    if (error && error.code !== "PGRST116") {
+      // PGRST116 means no rows found, which is fine
+      throw new Error(error.message || "Post not found or error fetching");
     }
-
-    return data as BlogPost;
+    return data || null; // data will be null if no row found (PGRST116)
   } catch (error) {
-    console.error("Error fetching blog post by slug:", error);
-    throw new Error("Post not found");
+    console.error(`Error fetching blog post by slug "${slug}":`, error);
+    return null; // Return null on error
   }
 }
+
+// --- PORTFOLIO CONTENT ---
+
+export async function fetchPortfolioSectionsWithItems(): Promise<
+  PortfolioSection[]
+> {
+  try {
+    const { data, error } = await supabase
+      .from("portfolio_sections")
+      .select(
+        `
+                *,
+                portfolio_items (
+                    *
+                )
+            `,
+      )
+      .order("display_order", { ascending: true })
+      .order("display_order", {
+        foreignTable: "portfolio_items",
+        ascending: true,
+      });
+
+    if (error) {
+      throw new Error(
+        error.message || "Failed to fetch portfolio sections from Supabase",
+      );
+    }
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching portfolio sections with items:", error);
+    return [];
+  }
+}
+
+// --- GITHUB PROJECTS --- (Example, if you fetch GitHub repos on server-side for public display)
+// This is usually done client-side as shown in projects.tsx, or server-side with getStaticProps/getServerSideProps.
+
+// export async function fetchGitHubProjects(username: string, perPage: number = 6): Promise<any[]> {
+//   const GITHUB_REPOS_URL = `https://api.github.com/users/${username}/repos?sort=updated&per_page=${perPage}&type=owner`;
+//   try {
+//     const response = await fetch(GITHUB_REPOS_URL);
+//     if (!response.ok) {
+//       const errorData = await response.json().catch(() => ({ message: response.statusText }));
+//       throw new Error(`GitHub API request failed: ${response.status} - ${errorData.message || 'Unknown error'}`);
+//     }
+//     const data = await response.json();
+//     const filteredProjects = data
+//       .filter((p: any) => !p.private && p.language && !p.fork && !p.archived && p.name !== username)
+//       .sort((a: any, b: any) => (b.stargazers_count || 0) - (a.stargazers_count || 0) || new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+//     return filteredProjects.slice(0, perPage);
+//   } catch (error) {
+//     console.error("Failed to fetch GitHub projects:", error);
+//     return [];
+//   }
+// }

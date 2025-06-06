@@ -1,18 +1,43 @@
-import { createClient, Session, User } from '@supabase/supabase-js';
+import {
+  createClient,
+  Session,
+  User,
+  SupabaseClientOptions,
+} from "@supabase/supabase-js"; // Import SupabaseClientOptions
+import { config } from "@/lib/config"; // Use centralized config
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const { supabase: supabaseConfig } = config; // Destructure supabase config
 
-if (!supabaseUrl) {
-  console.warn('Supabase URL is not configured. Please set NEXT_PUBLIC_SUPABASE_URL.');
+if (!supabaseConfig.url) {
+  console.error(
+    "Supabase URL is not configured. Please set NEXT_PUBLIC_SUPABASE_URL in your environment variables.",
+  );
+  // Consider throwing an error or handling this more gracefully depending on application needs
 }
-if (!supabaseAnonKey || supabaseAnonKey === 'YOUR_ANON_KEY') {
-  console.warn('Supabase Anon Key is not configured. Please set NEXT_PUBLIC_SUPABASE_ANON_KEY.');
+if (!supabaseConfig.anonKey) {
+  console.error(
+    "Supabase Anon Key is not configured. Please set NEXT_PUBLIC_SUPABASE_ANON_KEY in your environment variables.",
+  );
 }
+
+// Define Supabase client options, e.g., for schema, autoRefreshToken, etc.
+const options: SupabaseClientOptions<"public"> = {
+  // Specify schema type if not public
+  // schema: 'public', // Default
+  auth: {
+    // autoRefreshToken: true, // Default
+    // persistSession: true, // Default
+    // detectSessionInUrl: true, // Default for OAuth
+  },
+  // global: {
+  //   headers: { 'x-my-custom-header': 'my-app-name' },
+  // },
+};
 
 export const supabase = createClient(
-    supabaseUrl,
-    supabaseAnonKey
-)
+  supabaseConfig.url,
+  supabaseConfig.anonKey,
+  options,
+);
 
-export type { Session, User };
+export type { Session, User }; // Re-export types for convenience
